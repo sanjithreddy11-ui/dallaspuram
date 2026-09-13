@@ -983,6 +983,8 @@
     display:inline-flex; align-items:center; gap:6px;
     font-size:10.5px; font-weight:700; letter-spacing:.08em;
     color: var(--terracotta-deep);
+    background:none; border:none; padding:0; margin:0;
+    font-family:inherit;
   }
 
   /* ---- footer: progress + optional pause ---- */
@@ -1827,6 +1829,438 @@
     color: var(--charcoal-soft);
   }
   .footer__bottom .tagline{ opacity:.75; }
+
+  /* ==================================================== */
+  /* ORDER + RESERVATION — IN-WEBSITE MODAL SYSTEM         */
+  /* Shares the exact Dallaspuram palette, radius, borders  */
+  /* and type system used by every section above. Nothing   */
+  /* here introduces a new visual language.                 */
+  /* ==================================================== */
+  .modal-overlay{
+    position:fixed; inset:0; z-index:70;
+    background: rgba(36,30,26,.55);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    display:flex; justify-content:flex-end;
+    opacity:0; visibility:hidden;
+    transition: opacity .35s ease, visibility .35s ease;
+  }
+  .modal-overlay.is-open{ opacity:1; visibility:visible; }
+  .modal-overlay--center{ justify-content:center; align-items:center; padding:20px; }
+
+  body.modal-open{ overflow:hidden; }
+
+  /* ---- order drawer (right-side on desktop, full-screen on mobile) ---- */
+  .order-panel{
+    position:relative;
+    width:100%; max-width:none;
+    height:100%;
+    background: var(--cream);
+    display:flex; flex-direction:column;
+    transform: translateX(100%);
+    transition: transform .4s cubic-bezier(.22,.61,.36,1);
+    box-shadow: -18px 0 48px rgba(36,30,26,.28);
+  }
+  .modal-overlay.is-open .order-panel{ transform: translateX(0); }
+  @media (min-width:768px){
+    .order-panel{ max-width:480px; }
+  }
+  @media (min-width:1024px){
+    .order-panel{ max-width:540px; }
+  }
+
+  /* ---- reservation dialog (centered card, full-screen on mobile) ---- */
+  .reservation-panel{
+    position:relative;
+    width:100%; max-width:560px;
+    max-height:100%;
+    background: var(--cream);
+    border-radius:0;
+    display:flex; flex-direction:column;
+    opacity:0; transform: translateY(14px) scale(.98);
+    transition: opacity .3s ease, transform .3s ease;
+    box-shadow: 0 30px 70px rgba(36,30,26,.32);
+  }
+  .modal-overlay.is-open .reservation-panel{ opacity:1; transform: translateY(0) scale(1); }
+  @media (min-width:640px){
+    .reservation-panel{ border-radius:4px; max-height:92vh; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .order-panel, .reservation-panel{ transition:none; }
+  }
+
+  /* ---- shared panel chrome ---- */
+  .panel__header{
+    flex:0 0 auto;
+    display:flex; align-items:flex-start; justify-content:space-between;
+    gap:16px;
+    padding:24px 22px 18px;
+    border-bottom:1px solid var(--line);
+  }
+  @media (min-width:768px){
+    .panel__header{ padding:30px 32px 22px; }
+  }
+  .panel__eyebrow{
+    margin:0 0 4px;
+    font-size:10.5px; font-weight:700; letter-spacing:.16em;
+    color: var(--terracotta-deep);
+  }
+  .panel__title{
+    margin:0;
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size: clamp(1.5rem, 4vw, 1.9rem);
+    color: var(--charcoal);
+  }
+  .panel__close{
+    flex:none;
+    width:40px; height:40px;
+    display:flex; align-items:center; justify-content:center;
+    background:transparent;
+    border:1px solid var(--line);
+    border-radius:2px;
+    color: var(--charcoal);
+    font-size:16px;
+    transition: border-color .2s ease, color .2s ease, background .2s ease;
+  }
+  .panel__close:hover{ border-color: var(--terracotta-deep); color: var(--terracotta-deep); background: rgba(184,92,46,.08); }
+
+  .panel__steps{
+    flex:0 0 auto;
+    display:flex; gap:0;
+    border-bottom:1px solid var(--line);
+    overflow-x:auto;
+  }
+  .panel__steps .step{
+    flex:1 1 0;
+    text-align:center;
+    padding:12px 8px;
+    font-size:10px; font-weight:700; letter-spacing:.1em;
+    color: var(--charcoal-soft);
+    white-space:nowrap;
+    border-bottom:2px solid transparent;
+    position:relative; top:1px;
+  }
+  .panel__steps .step.is-current{
+    color: var(--terracotta-deep);
+    border-bottom-color: var(--terracotta-deep);
+  }
+  .panel__steps .step.is-done{ color: var(--charcoal); }
+
+  .panel__body{
+    flex:1 1 auto;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    padding:22px;
+  }
+  @media (min-width:768px){
+    .panel__body{ padding:28px 32px; }
+  }
+
+  .panel__footer{
+    flex:0 0 auto;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:12px;
+    padding:16px 22px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    border-top:1px solid var(--line);
+    background: rgba(244,236,221,.6);
+  }
+  @media (min-width:768px){
+    .panel__footer{ padding:20px 32px; padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)); }
+  }
+
+  .btn-panel{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:14px 20px;
+    font-size:12px; font-weight:700; letter-spacing:.08em;
+    border-radius:2px;
+    min-height:46px;
+    border:1px solid var(--charcoal);
+    transition: background .2s ease, color .2s ease, opacity .2s ease, transform .2s ease;
+  }
+  .btn-panel.primary{ background: var(--charcoal); color: var(--cream); flex:1 1 auto; }
+  .btn-panel.primary:hover{ background:#31281f; }
+  .btn-panel.ghost{ background:transparent; color: var(--charcoal); border-color: var(--line); flex:0 0 auto; }
+  .btn-panel.ghost:hover{ border-color: var(--charcoal); }
+  .btn-panel:disabled{ opacity:.4; pointer-events:none; }
+  .btn-panel:active{ transform: scale(.98); }
+
+  .order-view{ display:none; }
+  .order-view.is-active{ display:block; }
+
+  .order-view__hint{
+    font-size:13px; line-height:1.55;
+    color: var(--charcoal-soft);
+    margin:0 0 20px;
+  }
+
+  /* ---- ordering menu list (inside drawer) ---- */
+  .order-menu-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px; }
+  .order-menu-item{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:14px;
+    padding:16px;
+    background: rgba(244,236,221,.5);
+    border:1px solid var(--line);
+    border-radius:2px;
+    transition: border-color .25s ease;
+  }
+  .order-menu-item.is-added{ border-color: rgba(156,74,36,.4); }
+  .order-menu-item__top{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+  .order-menu-item__top .num{ font-family:'Fraunces', serif; font-size:12.5px; color: var(--terracotta-deep); }
+  .order-menu-item__top .badge{
+    font-size:9px; font-weight:700; letter-spacing:.08em;
+    color: var(--wood);
+    border:1px solid rgba(92,58,38,.4);
+    padding:2px 7px; border-radius:2px; text-transform:uppercase;
+  }
+  .order-menu-item h4{
+    margin:0 0 6px;
+    font-family:'Fraunces', serif; font-weight:500; font-size:15.5px;
+    color: var(--charcoal);
+  }
+  .order-menu-item p{ margin:0; font-size:12.5px; line-height:1.5; color: var(--charcoal-soft); max-width:34ch; }
+  .order-menu-item__action{ flex:none; }
+
+  .add-btn{
+    padding:10px 14px;
+    font-size:10.5px; font-weight:700; letter-spacing:.07em;
+    border:1px solid var(--charcoal);
+    border-radius:2px;
+    background:transparent; color: var(--charcoal);
+    white-space:nowrap;
+    transition: background .2s ease, color .2s ease;
+  }
+  .add-btn:hover{ background: var(--charcoal); color: var(--cream); }
+
+  .qty-stepper{
+    display:flex; align-items:center; gap:0;
+    border:1px solid var(--charcoal);
+    border-radius:2px;
+    overflow:hidden;
+  }
+  .qty-btn{
+    width:32px; height:32px;
+    display:flex; align-items:center; justify-content:center;
+    background:transparent; color: var(--charcoal);
+    font-size:15px; line-height:1;
+    transition: background .2s ease;
+  }
+  .qty-btn:hover{ background: rgba(36,30,26,.08); }
+  .qty-value{
+    min-width:26px; text-align:center;
+    font-size:13px; font-weight:700; color: var(--charcoal);
+  }
+
+  /* ---- cart view ---- */
+  .cart-head{
+    display:flex; align-items:center; justify-content:space-between;
+    margin:0 0 18px;
+  }
+  .cart-head h3{
+    margin:0; font-family:'Fraunces', serif; font-weight:500; font-size:16px; color: var(--charcoal);
+  }
+  .text-link{
+    background:none; border:none; padding:0;
+    font-size:11px; font-weight:700; letter-spacing:.08em;
+    color: var(--terracotta-deep);
+  }
+  .text-link:hover{ text-decoration: underline; }
+
+  .cart-list{ list-style:none; margin:0 0 8px; padding:0; display:flex; flex-direction:column; gap:12px; }
+  .cart-item{
+    display:flex; align-items:center; gap:12px;
+    padding:14px 12px;
+    background: rgba(244,236,221,.5);
+    border:1px solid var(--line);
+    border-radius:2px;
+  }
+  .cart-item__info{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .cart-item__num{ font-family:'Fraunces', serif; font-size:11.5px; color: var(--terracotta-deep); }
+  .cart-item__name{ font-size:13px; font-weight:700; letter-spacing:.03em; color: var(--charcoal); }
+  .cart-item__qty{ flex:none; }
+  .cart-item__remove{
+    flex:none;
+    width:30px; height:30px;
+    display:flex; align-items:center; justify-content:center;
+    background:transparent; border:1px solid var(--line); border-radius:2px;
+    color: var(--charcoal-soft); font-size:13px;
+    transition: border-color .2s ease, color .2s ease;
+  }
+  .cart-item__remove:hover{ border-color: var(--terracotta-deep); color: var(--terracotta-deep); }
+
+  .cart-empty{
+    display:none;
+    text-align:center;
+    padding:40px 12px;
+    font-size:13.5px; color: var(--charcoal-soft);
+  }
+  .cart-empty.is-visible{ display:block; }
+
+  /* ---- forms (order details + reservation) ---- */
+  .order-type-toggle{ display:flex; gap:10px; margin-bottom:22px; }
+  .order-type-btn{
+    flex:1 1 0;
+    padding:12px;
+    font-size:11.5px; font-weight:700; letter-spacing:.08em;
+    border:1px solid var(--line);
+    border-radius:2px;
+    background:transparent; color: var(--charcoal-soft);
+    transition: border-color .2s ease, color .2s ease, background .2s ease;
+  }
+  .order-type-btn.is-active{
+    border-color: var(--charcoal);
+    color: var(--charcoal);
+    background: rgba(244,236,221,.7);
+  }
+
+  .field{ margin-bottom:18px; }
+  .field-row{ display:flex; flex-direction:column; gap:18px; margin-bottom:18px; }
+  @media (min-width:520px){
+    .field-row{ flex-direction:row; }
+    .field-row .field{ flex:1 1 0; margin-bottom:0; }
+  }
+  .field label{
+    display:block;
+    font-size:10.5px; font-weight:700; letter-spacing:.1em;
+    color: var(--charcoal-soft);
+    margin-bottom:8px;
+  }
+  .field label .optional{ font-weight:600; text-transform:none; letter-spacing:normal; opacity:.7; }
+  .field input, .field select, .field textarea{
+    width:100%;
+    font-family:'Manrope', sans-serif;
+    font-size:14px;
+    color: var(--charcoal);
+    background: rgba(255,255,255,.5);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:12px 14px;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{
+    outline:none;
+    border-color: var(--terracotta-deep);
+    background: rgba(255,255,255,.75);
+  }
+  .field textarea{ resize:vertical; min-height:64px; }
+  .field.has-error input, .field.has-error select, .field.has-error textarea{
+    border-color:#9C3B2E;
+  }
+  .field__error{
+    display:block;
+    min-height:16px;
+    margin-top:6px;
+    font-size:11.5px;
+    color:#9C3B2E;
+  }
+  .field.is-hidden{ display:none; }
+
+  /* ---- review ---- */
+  .review-block{
+    margin-bottom:24px;
+    padding-bottom:20px;
+    border-bottom:1px solid var(--line);
+  }
+  .review-block:last-child{ border-bottom:none; margin-bottom:0; padding-bottom:0; }
+  .review-block h4{
+    margin:0 0 12px;
+    font-size:10.5px; font-weight:700; letter-spacing:.12em;
+    color: var(--terracotta-deep);
+  }
+  .review-row{
+    display:flex; justify-content:space-between; gap:12px;
+    font-size:13.5px; color: var(--charcoal);
+    padding:6px 0;
+  }
+  .review-row .k{ color: var(--charcoal-soft); }
+  .payment-note{
+    margin:0; padding:14px 16px;
+    font-size:12px; line-height:1.5;
+    background: rgba(184,92,46,.08);
+    border:1px solid rgba(156,74,36,.25);
+    border-radius:2px;
+    color: var(--wood);
+    font-weight:600;
+    letter-spacing:.02em;
+  }
+
+  /* ---- confirmation + error states ---- */
+  .confirmation{ text-align:center; padding:20px 4px 8px; }
+  .confirmation__eyebrow{
+    margin:0 0 14px;
+    font-size:10.5px; font-weight:700; letter-spacing:.16em;
+    color: var(--terracotta-deep);
+  }
+  .confirmation__title{
+    margin:0 0 12px;
+    font-family:'Fraunces', serif; font-weight:500;
+    font-size: clamp(1.4rem, 5vw, 1.8rem);
+    color: var(--charcoal);
+  }
+  .confirmation__copy{
+    margin:0 0 26px;
+    font-size:13.5px; line-height:1.6;
+    color: var(--charcoal-soft);
+  }
+  .confirmation__copy em{ font-style:italic; opacity:.85; }
+  .confirmation__ref{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 4px;
+    border-top:1px solid var(--line);
+    text-align:left;
+  }
+  .confirmation__ref:last-of-type{ border-bottom:1px solid var(--line); }
+  .confirmation__ref .label{
+    font-size:10.5px; font-weight:700; letter-spacing:.1em;
+    color: var(--charcoal-soft);
+  }
+  .confirmation__ref .value{
+    font-size:13.5px; font-weight:700; color: var(--charcoal);
+  }
+
+  .error-state{ text-align:center; padding:32px 4px; }
+  .error-state__title{
+    margin:0 0 10px;
+    font-family:'Fraunces', serif; font-weight:500; font-size:1.3rem;
+    color:#9C3B2E;
+  }
+  .error-state__copy{ margin:0; font-size:13.5px; color: var(--charcoal-soft); }
+
+  /* ---- cart badge on ORDER ONLINE ctas ---- */
+  .cart-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:18px; height:18px; padding:0 5px;
+    margin-left:8px;
+    background: var(--terracotta-deep);
+    color: var(--cream);
+    font-size:10px; font-weight:700;
+    border-radius:20px;
+    vertical-align:middle;
+  }
+  .cart-badge[hidden]{ display:none; }
+  .nav__cta.reserve .cart-badge, .btn.secondary .cart-badge{ display:none !important; }
+
+  /* ---- toast ---- */
+  .toast{
+    position:fixed; left:50%; bottom:28px; z-index:90;
+    transform: translate(-50%, 12px);
+    background: var(--charcoal); color: var(--cream);
+    padding:13px 20px;
+    font-size:12.5px; font-weight:600; letter-spacing:.03em;
+    border-radius:2px;
+    box-shadow: 0 12px 30px rgba(36,30,26,.3);
+    opacity:0; visibility:hidden;
+    transition: opacity .25s ease, transform .25s ease, visibility .25s ease;
+    max-width: calc(100% - 40px);
+    text-align:center;
+  }
+  .toast.is-visible{ opacity:1; visibility:visible; transform: translate(-50%, 0); }
+
+  @media (prefers-reduced-motion: reduce){
+    .modal-overlay, .order-panel, .reservation-panel, .toast{ transition:none; }
+  }
 </style>
 </head>
 <body class="intro-active">
@@ -1866,9 +2300,9 @@
     </ul>
 
     <div class="nav__right">
-      <a href="#reserve" class="nav__cta reserve">RESERVE A TABLE</a>
-      <a href="#order" class="nav__cta order">ORDER ONLINE</a>
-      <a href="#order" class="nav__cta order mobile-order">ORDER</a>
+      <a href="#reserve" class="nav__cta reserve js-open-reservation">RESERVE A TABLE</a>
+      <a href="#order" class="nav__cta order js-open-order">ORDER ONLINE <span class="cart-badge" data-cart-badge hidden>0</span></a>
+      <a href="#order" class="nav__cta order mobile-order js-open-order">ORDER <span class="cart-badge" data-cart-badge hidden>0</span></a>
       <button class="hamburger" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel">
         <span></span>
       </button>
@@ -1899,8 +2333,8 @@
       </p>
 
       <div class="cta-row">
-        <a href="#order" class="btn primary">ORDER ONLINE <span class="arrow">→</span></a>
-        <a href="#reserve" class="btn secondary">RESERVE A TABLE <span class="arrow">→</span></a>
+        <a href="#order" class="btn primary js-open-order">ORDER ONLINE <span class="cart-badge" data-cart-badge hidden>0</span> <span class="arrow">→</span></a>
+        <a href="#reserve" class="btn secondary js-open-reservation">RESERVE A TABLE <span class="arrow">→</span></a>
       </div>
 
       <div class="info-row">
@@ -2045,104 +2479,104 @@
     <div class="menu__marquee reveal" id="menuMarquee">
       <div class="menu__viewport" id="menuViewport">
         <ul class="menu__track" id="menuTrack">
-        <li class="menu-card">
+        <li class="menu-card" data-item-id="1">
           <div class="menu-card__top">
             <span class="menu-card__num">01</span>
             <span class="menu-card__badge">SIGNATURE</span>
           </div>
           <h3 class="menu-card__title">GONGURA MUTTON</h3>
           <p class="menu-card__desc">Tender mutton slow-cooked with tangy gongura and bold Telugu spices.</p>
-          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+          <button type="button" class="menu-card__cta js-menu-add">ORDER DIRECTLY <span class="arrow">→</span></button>
         </li>
-        <li class="menu-card">
+        <li class="menu-card" data-item-id="2">
           <div class="menu-card__top">
             <span class="menu-card__num">02</span>
           </div>
           <h3 class="menu-card__title">NATU KODI</h3>
           <p class="menu-card__desc">Country chicken simmered in deeply spiced masala with unmistakable Andhra character.</p>
-          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+          <button type="button" class="menu-card__cta js-menu-add">ORDER DIRECTLY <span class="arrow">→</span></button>
         </li>
-        <li class="menu-card">
+        <li class="menu-card" data-item-id="3">
           <div class="menu-card__top">
             <span class="menu-card__num">03</span>
           </div>
           <h3 class="menu-card__title">ROYYALA IGURU</h3>
           <p class="menu-card__desc">Juicy prawns tossed in a rich, fiery masala inspired by coastal Telugu kitchens.</p>
-          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+          <button type="button" class="menu-card__cta js-menu-add">ORDER DIRECTLY <span class="arrow">→</span></button>
         </li>
-        <li class="menu-card">
+        <li class="menu-card" data-item-id="4">
           <div class="menu-card__top">
             <span class="menu-card__num">04</span>
           </div>
           <h3 class="menu-card__title">GUTTI VANKAYA</h3>
           <p class="menu-card__desc">Baby brinjals filled with a fragrant spice blend and cooked until rich and tender.</p>
-          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+          <button type="button" class="menu-card__cta js-menu-add">ORDER DIRECTLY <span class="arrow">→</span></button>
         </li>
-        <li class="menu-card">
+        <li class="menu-card" data-item-id="5">
           <div class="menu-card__top">
             <span class="menu-card__num">05</span>
             <span class="menu-card__badge">BEST SELLER</span>
           </div>
           <h3 class="menu-card__title">ANDHRA CHICKEN</h3>
           <p class="menu-card__desc">Succulent chicken layered with roasted spices, curry leaves and a fiery Andhra finish.</p>
-          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+          <button type="button" class="menu-card__cta js-menu-add">ORDER DIRECTLY <span class="arrow">→</span></button>
         </li>
-        <li class="menu-card">
+        <li class="menu-card" data-item-id="6">
           <div class="menu-card__top">
             <span class="menu-card__num">06</span>
           </div>
           <h3 class="menu-card__title">MIRCHI BAJJI</h3>
           <p class="menu-card__desc">Green chillies coated in crisp golden batter with classic Telugu accompaniments.</p>
-          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+          <button type="button" class="menu-card__cta js-menu-add">ORDER DIRECTLY <span class="arrow">→</span></button>
         </li>
-        <li class="menu-card">
+        <li class="menu-card" data-item-id="7">
           <div class="menu-card__top">
             <span class="menu-card__num">07</span>
           </div>
           <h3 class="menu-card__title">PEPPER CHICKEN</h3>
           <p class="menu-card__desc">Tender chicken finished with cracked pepper, curry leaves and aromatic spices.</p>
-          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+          <button type="button" class="menu-card__cta js-menu-add">ORDER DIRECTLY <span class="arrow">→</span></button>
         </li>
-        <li class="menu-card">
+        <li class="menu-card" data-item-id="8">
           <div class="menu-card__top">
             <span class="menu-card__num">08</span>
           </div>
           <h3 class="menu-card__title">KODI VEPUDU</h3>
           <p class="menu-card__desc">Andhra-style chicken fry tossed with roasted spices, chillies and curry leaves.</p>
-          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+          <button type="button" class="menu-card__cta js-menu-add">ORDER DIRECTLY <span class="arrow">→</span></button>
         </li>
-        <li class="menu-card">
+        <li class="menu-card" data-item-id="9">
           <div class="menu-card__top">
             <span class="menu-card__num">09</span>
           </div>
           <h3 class="menu-card__title">ULAVA CHARU</h3>
           <p class="menu-card__desc">A slow-cooked horse gram broth with earthy depth and a warming, tangy finish.</p>
-          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+          <button type="button" class="menu-card__cta js-menu-add">ORDER DIRECTLY <span class="arrow">→</span></button>
         </li>
-        <li class="menu-card">
+        <li class="menu-card" data-item-id="10">
           <div class="menu-card__top">
             <span class="menu-card__num">10</span>
           </div>
           <h3 class="menu-card__title">PULIHORA</h3>
           <p class="menu-card__desc">Fragrant rice with tamarind, toasted spices, peanuts and curry leaves.</p>
-          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+          <button type="button" class="menu-card__cta js-menu-add">ORDER DIRECTLY <span class="arrow">→</span></button>
         </li>
-        <li class="menu-card">
+        <li class="menu-card" data-item-id="11">
           <div class="menu-card__top">
             <span class="menu-card__num">11</span>
           </div>
           <h3 class="menu-card__title">RAGI SANGATI</h3>
           <p class="menu-card__desc">Traditional ragi dumplings paired with rich, comforting Telugu-style curries.</p>
-          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+          <button type="button" class="menu-card__cta js-menu-add">ORDER DIRECTLY <span class="arrow">→</span></button>
         </li>
-        <li class="menu-card">
+        <li class="menu-card" data-item-id="12">
           <div class="menu-card__top">
             <span class="menu-card__num">12</span>
             <span class="menu-card__badge">HOUSE FAVOURITE</span>
           </div>
           <h3 class="menu-card__title">POOTHAREKULU</h3>
           <p class="menu-card__desc">Delicate rice-paper layers wrapped around a rich, melt-in-the-mouth sweet filling.</p>
-          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+          <button type="button" class="menu-card__cta js-menu-add">ORDER DIRECTLY <span class="arrow">→</span></button>
         </li>
         </ul>
       </div>
@@ -2414,8 +2848,8 @@
           <li><a href="#gallery">GALLERY</a></li>
           <li><a href="#guest-stories">GUEST STORIES</a></li>
           <li><a href="#visit-us">VISIT US</a></li>
-          <li><a href="#reserve">RESERVE A TABLE</a></li>
-          <li><a href="#order">ORDER ONLINE</a></li>
+          <li><a href="#reserve" class="js-open-reservation">RESERVE A TABLE</a></li>
+          <li><a href="#order" class="js-open-order">ORDER ONLINE</a></li>
         </ul>
       </div>
 
@@ -2456,10 +2890,234 @@
     <li><a href="#visit-us">Visit Us</a></li>
   </ul>
   <div class="menu-panel__ctas">
-    <a href="#order" class="order">ORDER ONLINE</a>
-    <a href="#reserve" class="reserve">RESERVE A TABLE</a>
+    <a href="#order" class="order js-open-order">ORDER ONLINE <span class="cart-badge" data-cart-badge hidden>0</span></a>
+    <a href="#reserve" class="reserve js-open-reservation">RESERVE A TABLE</a>
   </div>
 </div>
+
+<!-- ================================
+     IN-WEBSITE ORDERING EXPERIENCE
+     Prototype frontend only — see APP_CONFIG / PROTOTYPE_MODE in
+     the script below for how this is structured to connect to a
+     real backend later. No third-party redirect anywhere here.
+     ================================ -->
+<div class="modal-overlay" id="orderOverlay" aria-hidden="true">
+  <div class="order-panel" role="dialog" aria-modal="true" aria-labelledby="orderPanelTitle" id="orderPanel">
+
+    <div class="panel__header">
+      <div>
+        <p class="panel__eyebrow">DALLASPURAM</p>
+        <h2 class="panel__title" id="orderPanelTitle">Order Online</h2>
+      </div>
+      <button type="button" class="panel__close" id="orderClose" aria-label="Close ordering panel">✕</button>
+    </div>
+
+    <div class="panel__steps" aria-hidden="true">
+      <span class="step" data-step="menu">MENU</span>
+      <span class="step" data-step="cart">CART</span>
+      <span class="step" data-step="details">DETAILS</span>
+      <span class="step" data-step="review">REVIEW</span>
+    </div>
+
+    <div class="panel__body" id="orderBody">
+
+      <div class="order-view" data-view="menu" id="orderViewMenu">
+        <p class="order-view__hint">Select dishes to add to your order. This is a prototype experience — prices will be confirmed by the restaurant.</p>
+        <ul class="order-menu-list" id="orderMenuList"></ul>
+      </div>
+
+      <div class="order-view" data-view="cart" id="orderViewCart">
+        <div class="cart-head">
+          <h3 id="cartCountLabel">YOUR CART (0)</h3>
+          <button type="button" class="text-link" id="cartClearBtn">CLEAR CART</button>
+        </div>
+        <ul class="cart-list" id="cartList"></ul>
+        <p class="cart-empty" id="cartEmpty">Your cart is empty. Go back to the menu to add a few dishes.</p>
+      </div>
+
+      <div class="order-view" data-view="details" id="orderViewDetails">
+        <form id="orderDetailsForm" novalidate>
+          <div class="order-type-toggle" role="radiogroup" aria-label="Order type">
+            <button type="button" class="order-type-btn is-active" id="orderTypeDelivery" data-order-type="delivery" aria-pressed="true">DELIVERY</button>
+            <button type="button" class="order-type-btn" id="orderTypePickup" data-order-type="pickup" aria-pressed="false">PICKUP</button>
+          </div>
+
+          <div class="field">
+            <label for="orderName">FULL NAME</label>
+            <input type="text" id="orderName" name="name" autocomplete="name">
+            <span class="field__error" id="orderNameError"></span>
+          </div>
+          <div class="field">
+            <label for="orderPhone">PHONE NUMBER</label>
+            <input type="tel" id="orderPhone" name="phone" autocomplete="tel" inputmode="tel">
+            <span class="field__error" id="orderPhoneError"></span>
+          </div>
+          <div class="field">
+            <label for="orderEmail">EMAIL ADDRESS</label>
+            <input type="email" id="orderEmail" name="email" autocomplete="email">
+            <span class="field__error" id="orderEmailError"></span>
+          </div>
+          <div class="field" id="orderAddressField">
+            <label for="orderAddress">DELIVERY ADDRESS</label>
+            <textarea id="orderAddress" name="address" rows="2"></textarea>
+            <span class="field__error" id="orderAddressError"></span>
+          </div>
+          <div class="field">
+            <label for="orderNotes">SPECIAL INSTRUCTIONS <span class="optional">(optional)</span></label>
+            <textarea id="orderNotes" name="notes" rows="2"></textarea>
+          </div>
+        </form>
+      </div>
+
+      <div class="order-view" data-view="review" id="orderViewReview">
+        <div class="review-block">
+          <h4>ORDER SUMMARY</h4>
+          <div id="orderReviewItems"></div>
+        </div>
+        <div class="review-block">
+          <h4>CUSTOMER DETAILS</h4>
+          <div id="orderReviewDetails"></div>
+        </div>
+        <p class="payment-note">PAYMENT COMING SOON — actual payment processing will be added through a secure backend later. No payment is taken now.</p>
+      </div>
+
+      <div class="order-view" data-view="confirmation" id="orderViewConfirmation">
+        <div class="confirmation">
+          <p class="confirmation__eyebrow">ORDER RECEIVED</p>
+          <h3 class="confirmation__title">Thank you, <span id="orderConfName"></span>.</h3>
+          <p class="confirmation__copy">Your order has been received by Dallaspuram. <em>Prototype confirmation — no live backend is connected yet.</em></p>
+          <div class="confirmation__ref">
+            <span class="label">ORDER REFERENCE</span>
+            <span class="value" id="orderConfRef"></span>
+          </div>
+          <div class="confirmation__ref">
+            <span class="label">ORDER TYPE</span>
+            <span class="value" id="orderConfType"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-view" data-view="error" id="orderViewError">
+        <div class="error-state">
+          <p class="error-state__title">Something went wrong.</p>
+          <p class="error-state__copy">Please try again. Your cart has been kept.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="panel__footer">
+      <button type="button" class="btn-panel ghost" id="orderBackBtn">BACK</button>
+      <button type="button" class="btn-panel primary" id="orderPrimaryBtn">VIEW CART</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ================================
+     IN-WEBSITE TABLE RESERVATION
+     Prototype frontend only — see submitReservation() below for
+     the backend-ready architecture. No third-party redirect.
+     ================================ -->
+<div class="modal-overlay modal-overlay--center" id="reservationOverlay" aria-hidden="true">
+  <div class="reservation-panel" role="dialog" aria-modal="true" aria-labelledby="reservationPanelTitle" id="reservationPanel">
+
+    <div class="panel__header">
+      <div>
+        <p class="panel__eyebrow">DALLASPURAM</p>
+        <h2 class="panel__title" id="reservationPanelTitle">Reserve a Table</h2>
+      </div>
+      <button type="button" class="panel__close" id="reservationClose" aria-label="Close reservation panel">✕</button>
+    </div>
+
+    <div class="panel__body" id="reservationBody">
+
+      <div class="order-view is-active" data-view="form" id="reservationViewForm">
+        <form id="reservationForm" novalidate>
+          <div class="field">
+            <label for="resName">FULL NAME</label>
+            <input type="text" id="resName" name="name" autocomplete="name">
+            <span class="field__error" id="resNameError"></span>
+          </div>
+          <div class="field">
+            <label for="resPhone">PHONE NUMBER</label>
+            <input type="tel" id="resPhone" name="phone" autocomplete="tel" inputmode="tel">
+            <span class="field__error" id="resPhoneError"></span>
+          </div>
+          <div class="field">
+            <label for="resEmail">EMAIL ADDRESS</label>
+            <input type="email" id="resEmail" name="email" autocomplete="email">
+            <span class="field__error" id="resEmailError"></span>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="resDate">DATE</label>
+              <input type="date" id="resDate" name="date">
+              <span class="field__error" id="resDateError"></span>
+            </div>
+            <div class="field">
+              <label for="resTime">TIME</label>
+              <select id="resTime" name="time">
+                <option value="">Select a time</option>
+              </select>
+              <span class="field__error" id="resTimeError"></span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="resGuests">NUMBER OF GUESTS</label>
+            <select id="resGuests" name="guests">
+              <option value="">Select guest count</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8+">8+</option>
+            </select>
+            <span class="field__error" id="resGuestsError"></span>
+          </div>
+
+          <div class="field">
+            <label for="resRequest">SPECIAL REQUEST <span class="optional">(optional)</span></label>
+            <textarea id="resRequest" name="request" rows="2" placeholder="Birthday, anniversary, preferred seating, accessibility request..."></textarea>
+          </div>
+        </form>
+      </div>
+
+      <div class="order-view" data-view="confirmation" id="reservationViewConfirmation">
+        <div class="confirmation">
+          <p class="confirmation__eyebrow">RESERVATION REQUEST RECEIVED</p>
+          <h3 class="confirmation__title">Thank you, <span id="resConfName"></span>.</h3>
+          <p class="confirmation__copy">Your reservation request has been submitted. <em>Prototype confirmation — no live backend is connected yet.</em></p>
+          <div class="confirmation__ref"><span class="label">DATE</span><span class="value" id="resConfDate"></span></div>
+          <div class="confirmation__ref"><span class="label">TIME</span><span class="value" id="resConfTime"></span></div>
+          <div class="confirmation__ref"><span class="label">GUESTS</span><span class="value" id="resConfGuests"></span></div>
+          <div class="confirmation__ref"><span class="label">RESERVATION REFERENCE</span><span class="value" id="resConfRef"></span></div>
+        </div>
+      </div>
+
+      <div class="order-view" data-view="error" id="reservationViewError">
+        <div class="error-state">
+          <p class="error-state__title">Your reservation could not be submitted.</p>
+          <p class="error-state__copy">Please try again. Your details have been kept.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="panel__footer">
+      <button type="button" class="btn-panel ghost" id="reservationBackBtn" style="display:none;">BACK</button>
+      <button type="button" class="btn-panel primary" id="reservationPrimaryBtn">SUBMIT RESERVATION</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="siteToast" role="status" aria-live="polite"></div>
 
 <script>
   // ---- Loading intro ----
@@ -3005,6 +3663,787 @@
 
     paint();
   })();
+</script>
+
+<!-- ================================
+     IN-WEBSITE ORDER + RESERVATION LOGIC
+     Frontend prototype. PROTOTYPE_MODE stores submissions in
+     localStorage and simulates a network round trip. Flip
+     PROTOTYPE_MODE to false and these functions post to the real
+     APP_CONFIG endpoints once a backend exists — no other code
+     needs to change.
+     ================================ -->
+<script>
+(function(){
+  'use strict';
+
+  /* ---------------------------------------------------- */
+  /* BACKEND-READY CONFIGURATION                            */
+  /* ---------------------------------------------------- */
+  var APP_CONFIG = {
+    orderEndpoint: '/api/orders',
+    reservationEndpoint: '/api/reservations'
+  };
+  var PROTOTYPE_MODE = true; // set to false once a real backend exists
+
+  var CART_STORAGE_KEY = 'dallsapuram_cart';
+  var ORDERS_STORAGE_KEY = 'dallsapuram_orders';
+  var RESERVATIONS_STORAGE_KEY = 'dallsapuram_reservations';
+
+  /* ---------------------------------------------------- */
+  /* MENU DATA — same 12 dishes shown in the homepage Menu  */
+  /* marquee. Single source of truth for the ordering       */
+  /* interface; nothing here is a second, unrelated dataset.*/
+  /* ---------------------------------------------------- */
+  var MENU_DATA = [
+    { id:1,  num:'01', badge:'SIGNATURE',       name:'GONGURA MUTTON',  desc:'Tender mutton slow-cooked with tangy gongura and bold Telugu spices.' },
+    { id:2,  num:'02', badge:null,              name:'NATU KODI',       desc:'Country chicken simmered in deeply spiced masala with unmistakable Andhra character.' },
+    { id:3,  num:'03', badge:null,              name:'ROYYALA IGURU',   desc:'Juicy prawns tossed in a rich, fiery masala inspired by coastal Telugu kitchens.' },
+    { id:4,  num:'04', badge:null,              name:'GUTTI VANKAYA',   desc:'Baby brinjals filled with a fragrant spice blend and cooked until rich and tender.' },
+    { id:5,  num:'05', badge:'BEST SELLER',     name:'ANDHRA CHICKEN',  desc:'Succulent chicken layered with roasted spices, curry leaves and a fiery Andhra finish.' },
+    { id:6,  num:'06', badge:null,              name:'MIRCHI BAJJI',    desc:'Green chillies coated in crisp golden batter with classic Telugu accompaniments.' },
+    { id:7,  num:'07', badge:null,              name:'PEPPER CHICKEN',  desc:'Tender chicken finished with cracked pepper, curry leaves and aromatic spices.' },
+    { id:8,  num:'08', badge:null,              name:'KODI VEPUDU',     desc:'Andhra-style chicken fry tossed with roasted spices, chillies and curry leaves.' },
+    { id:9,  num:'09', badge:null,              name:'ULAVA CHARU',     desc:'A slow-cooked horse gram broth with earthy depth and a warming, tangy finish.' },
+    { id:10, num:'10', badge:null,              name:'PULIHORA',        desc:'Fragrant rice with tamarind, toasted spices, peanuts and curry leaves.' },
+    { id:11, num:'11', badge:null,              name:'RAGI SANGATI',    desc:'Traditional ragi dumplings paired with rich, comforting Telugu-style curries.' },
+    { id:12, num:'12', badge:'HOUSE FAVOURITE', name:'POOTHAREKULU',    desc:'Delicate rice-paper layers wrapped around a rich, melt-in-the-mouth sweet filling.' }
+  ];
+
+  var ORDER_STEP_ORDER = ['menu','cart','details','review'];
+
+  /* ---------------------------------------------------- */
+  /* STORAGE HELPERS                                         */
+  /* ---------------------------------------------------- */
+  function safeGetJSON(key, fallback){
+    try{
+      var raw = localStorage.getItem(key);
+      if (!raw) return fallback;
+      var parsed = JSON.parse(raw);
+      return (parsed === null || parsed === undefined) ? fallback : parsed;
+    } catch(err){
+      console.warn('Dallaspuram: storage read failed for', key, err);
+      return fallback;
+    }
+  }
+  function safeSetJSON(key, value){
+    try{
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    } catch(err){
+      console.warn('Dallaspuram: storage write failed for', key, err);
+      return false;
+    }
+  }
+
+  function escapeHtml(str){
+    return String(str == null ? '' : str).replace(/[&<>"]/g, function(c){
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c];
+    });
+  }
+  function isValidEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+  function isValidPhone(v){ return /^[0-9+\-\s()]{7,18}$/.test(v); }
+  function isDateInPast(dateStr){
+    if (!dateStr) return true;
+    var today = new Date(); today.setHours(0,0,0,0);
+    var d = new Date(dateStr + 'T00:00:00');
+    return d < today;
+  }
+  function formatDateDisplay(dateStr){
+    try{
+      var d = new Date(dateStr + 'T00:00:00');
+      return d.toLocaleDateString(undefined, { weekday:'short', day:'numeric', month:'short', year:'numeric' });
+    } catch(err){ return dateStr; }
+  }
+  function generateReference(prefix){
+    var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    var out = '';
+    for (var i=0; i<6; i++){ out += chars.charAt(Math.floor(Math.random() * chars.length)); }
+    return prefix + '-' + out;
+  }
+
+  /* ---------------------------------------------------- */
+  /* CART STATE                                              */
+  /* ---------------------------------------------------- */
+  var cart = safeGetJSON(CART_STORAGE_KEY, {});
+
+  function saveCart(){ safeSetJSON(CART_STORAGE_KEY, cart); }
+  function addToCart(id, qty){
+    qty = qty || 1;
+    cart[id] = (cart[id] || 0) + qty;
+    saveCart();
+    refreshCartUI();
+  }
+  function setCartQty(id, qty){
+    if (qty <= 0){ delete cart[id]; } else { cart[id] = qty; }
+    saveCart();
+    refreshCartUI();
+  }
+  function removeFromCart(id){
+    delete cart[id];
+    saveCart();
+    refreshCartUI();
+  }
+  function clearCart(){
+    cart = {};
+    saveCart();
+    refreshCartUI();
+  }
+  function cartCount(){
+    return Object.keys(cart).reduce(function(sum, id){ return sum + (cart[id] || 0); }, 0);
+  }
+  function cartDetailed(){
+    return Object.keys(cart).map(function(id){
+      var item = MENU_DATA.filter(function(m){ return String(m.id) === String(id); })[0];
+      return item ? { item: item, qty: cart[id] } : null;
+    }).filter(Boolean);
+  }
+
+  /* ---------------------------------------------------- */
+  /* SHARED DOM REFERENCES                                   */
+  /* ---------------------------------------------------- */
+  var orderOverlay = document.getElementById('orderOverlay');
+  var orderPanel = document.getElementById('orderPanel');
+  var orderMenuList = document.getElementById('orderMenuList');
+  var cartList = document.getElementById('cartList');
+  var cartEmpty = document.getElementById('cartEmpty');
+  var cartCountLabel = document.getElementById('cartCountLabel');
+  var orderBackBtn = document.getElementById('orderBackBtn');
+  var orderPrimaryBtn = document.getElementById('orderPrimaryBtn');
+  var orderAddressField = document.getElementById('orderAddressField');
+
+  var reservationOverlay = document.getElementById('reservationOverlay');
+  var reservationPanel = document.getElementById('reservationPanel');
+  var reservationBackBtn = document.getElementById('reservationBackBtn');
+  var reservationPrimaryBtn = document.getElementById('reservationPrimaryBtn');
+  var resTimeSelect = document.getElementById('resTime');
+  var resDateInput = document.getElementById('resDate');
+
+  if (!orderOverlay || !reservationOverlay) return; // markup not present — nothing to wire up
+
+  var currentOrderView = 'menu';
+  var currentReservationView = 'form';
+  var activeOrderType = 'delivery';
+  var lastFocusedOrderTrigger = null;
+  var lastFocusedReservationTrigger = null;
+
+  /* ---------------------------------------------------- */
+  /* TOAST                                                   */
+  /* ---------------------------------------------------- */
+  var toastEl = document.getElementById('siteToast');
+  var toastTimer = null;
+  function showToast(message){
+    if (!toastEl) return;
+    toastEl.textContent = message;
+    toastEl.classList.add('is-visible');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove('is-visible'); }, 2200);
+  }
+
+  /* ---------------------------------------------------- */
+  /* FIELD VALIDATION HELPERS                                */
+  /* ---------------------------------------------------- */
+  function setFieldError(fieldId, message){
+    var input = document.getElementById(fieldId);
+    var errorEl = document.getElementById(fieldId + 'Error');
+    if (!input) return true;
+    var wrapper = input.closest('.field');
+    if (message){
+      if (wrapper) wrapper.classList.add('has-error');
+      if (errorEl) errorEl.textContent = message;
+      return false;
+    }
+    if (wrapper) wrapper.classList.remove('has-error');
+    if (errorEl) errorEl.textContent = '';
+    return true;
+  }
+
+  function validateOrder(){
+    var name = document.getElementById('orderName').value.trim();
+    var phone = document.getElementById('orderPhone').value.trim();
+    var email = document.getElementById('orderEmail').value.trim();
+    var address = document.getElementById('orderAddress').value.trim();
+
+    var okName = setFieldError('orderName', name.length < 2 ? 'Please enter your full name.' : '');
+    var okPhone = setFieldError('orderPhone', !isValidPhone(phone) ? 'Please enter a valid phone number.' : '');
+    var okEmail = setFieldError('orderEmail', !isValidEmail(email) ? 'Please enter a valid email address.' : '');
+    var okAddress = true;
+    if (activeOrderType === 'delivery'){
+      okAddress = setFieldError('orderAddress', address.length < 5 ? 'Please enter your delivery address.' : '');
+    } else {
+      setFieldError('orderAddress', '');
+    }
+    return okName && okPhone && okEmail && okAddress;
+  }
+
+  function validateReservation(){
+    var name = document.getElementById('resName').value.trim();
+    var phone = document.getElementById('resPhone').value.trim();
+    var email = document.getElementById('resEmail').value.trim();
+    var date = document.getElementById('resDate').value;
+    var time = document.getElementById('resTime').value;
+    var guests = document.getElementById('resGuests').value;
+
+    var okName = setFieldError('resName', name.length < 2 ? 'Please enter your full name.' : '');
+    var okPhone = setFieldError('resPhone', !isValidPhone(phone) ? 'Please enter a valid phone number.' : '');
+    var okEmail = setFieldError('resEmail', !isValidEmail(email) ? 'Please enter a valid email address.' : '');
+    var okDate = setFieldError('resDate', (!date || isDateInPast(date)) ? 'Please select a valid upcoming date.' : '');
+    var okTime = setFieldError('resTime', !time ? 'Please select a time.' : '');
+    var okGuests = setFieldError('resGuests', !guests ? 'Please select the number of guests.' : '');
+    return okName && okPhone && okEmail && okDate && okTime && okGuests;
+  }
+
+  /* ---------------------------------------------------- */
+  /* RENDERING                                               */
+  /* ---------------------------------------------------- */
+  function renderOrderMenuList(){
+    if (!orderMenuList) return;
+    orderMenuList.innerHTML = MENU_DATA.map(function(item){
+      var qty = cart[item.id] || 0;
+      var badge = item.badge ? '<span class="badge">' + escapeHtml(item.badge) + '</span>' : '';
+      var action = qty > 0
+        ? '<div class="qty-stepper">' +
+            '<button type="button" class="qty-btn" data-qty-decrease="' + item.id + '" aria-label="Decrease quantity of ' + escapeHtml(item.name) + '">\u2212</button>' +
+            '<span class="qty-value">' + qty + '</span>' +
+            '<button type="button" class="qty-btn" data-qty-increase="' + item.id + '" aria-label="Increase quantity of ' + escapeHtml(item.name) + '">+</button>' +
+          '</div>'
+        : '<button type="button" class="add-btn" data-add-item="' + item.id + '">ADD TO ORDER</button>';
+      return '<li class="order-menu-item' + (qty > 0 ? ' is-added' : '') + '" data-menu-item="' + item.id + '">' +
+          '<div class="order-menu-item__info">' +
+            '<div class="order-menu-item__top"><span class="num">' + item.num + '</span>' + badge + '</div>' +
+            '<h4>' + escapeHtml(item.name) + '</h4>' +
+            '<p>' + escapeHtml(item.desc) + '</p>' +
+          '</div>' +
+          '<div class="order-menu-item__action">' + action + '</div>' +
+        '</li>';
+    }).join('');
+  }
+
+  function renderCartList(){
+    if (!cartList) return;
+    var details = cartDetailed();
+    if (cartCountLabel) cartCountLabel.textContent = 'YOUR CART (' + cartCount() + ')';
+    if (!details.length){
+      cartList.innerHTML = '';
+      if (cartEmpty) cartEmpty.classList.add('is-visible');
+      return;
+    }
+    if (cartEmpty) cartEmpty.classList.remove('is-visible');
+    cartList.innerHTML = details.map(function(d){
+      return '<li class="cart-item" data-cart-item="' + d.item.id + '">' +
+          '<div class="cart-item__info"><span class="cart-item__num">' + d.item.num + '</span><span class="cart-item__name">' + escapeHtml(d.item.name) + '</span></div>' +
+          '<div class="cart-item__qty"><div class="qty-stepper">' +
+            '<button type="button" class="qty-btn" data-qty-decrease="' + d.item.id + '" aria-label="Decrease quantity of ' + escapeHtml(d.item.name) + '">\u2212</button>' +
+            '<span class="qty-value">' + d.qty + '</span>' +
+            '<button type="button" class="qty-btn" data-qty-increase="' + d.item.id + '" aria-label="Increase quantity of ' + escapeHtml(d.item.name) + '">+</button>' +
+          '</div></div>' +
+          '<button type="button" class="cart-item__remove" data-cart-remove="' + d.item.id + '" aria-label="Remove ' + escapeHtml(d.item.name) + ' from cart">\u2715</button>' +
+        '</li>';
+    }).join('');
+  }
+
+  function updateCartBadges(){
+    var count = cartCount();
+    document.querySelectorAll('[data-cart-badge]').forEach(function(b){
+      if (count > 0){ b.hidden = false; b.textContent = String(count); }
+      else { b.hidden = true; b.textContent = '0'; }
+    });
+    if (orderOverlay.classList.contains('is-open')) updateOrderFooter(currentOrderView);
+  }
+
+  function refreshCartUI(){
+    updateCartBadges();
+    renderOrderMenuList();
+    renderCartList();
+  }
+
+  function renderOrderReview(){
+    var itemsEl = document.getElementById('orderReviewItems');
+    var detailsEl = document.getElementById('orderReviewDetails');
+    var details = cartDetailed();
+
+    itemsEl.innerHTML = details.length
+      ? details.map(function(d){
+          return '<div class="review-row"><span>' + d.qty + ' \u00d7 ' + escapeHtml(d.item.name) + '</span></div>';
+        }).join('')
+      : '<div class="review-row"><span class="k">No items selected.</span></div>';
+
+    var name = document.getElementById('orderName').value.trim();
+    var phone = document.getElementById('orderPhone').value.trim();
+    var email = document.getElementById('orderEmail').value.trim();
+    var address = document.getElementById('orderAddress').value.trim();
+    var notes = document.getElementById('orderNotes').value.trim();
+
+    function row(k, v){ return '<div class="review-row"><span class="k">' + k + '</span><span>' + escapeHtml(v) + '</span></div>'; }
+
+    var rows = [
+      row('Name', name),
+      row('Phone', phone),
+      row('Email', email),
+      row('Order type', activeOrderType === 'delivery' ? 'Delivery' : 'Pickup')
+    ];
+    if (activeOrderType === 'delivery') rows.push(row('Address', address));
+    if (notes) rows.push(row('Special instructions', notes));
+    detailsEl.innerHTML = rows.join('');
+  }
+
+  /* ---------------------------------------------------- */
+  /* ORDER TYPE TOGGLE                                       */
+  /* ---------------------------------------------------- */
+  function setOrderType(type){
+    activeOrderType = type;
+    var deliveryBtn = document.getElementById('orderTypeDelivery');
+    var pickupBtn = document.getElementById('orderTypePickup');
+    deliveryBtn.classList.toggle('is-active', type === 'delivery');
+    deliveryBtn.setAttribute('aria-pressed', type === 'delivery' ? 'true' : 'false');
+    pickupBtn.classList.toggle('is-active', type === 'pickup');
+    pickupBtn.setAttribute('aria-pressed', type === 'pickup' ? 'true' : 'false');
+    if (orderAddressField) orderAddressField.classList.toggle('is-hidden', type !== 'delivery');
+    if (type !== 'delivery') setFieldError('orderAddress', '');
+  }
+
+  /* ---------------------------------------------------- */
+  /* ORDER PANEL STEP CONTROL                                */
+  /* ---------------------------------------------------- */
+  function setOrderStepUI(view){
+    currentOrderView = view;
+    document.querySelectorAll('#orderBody .order-view').forEach(function(v){
+      v.classList.toggle('is-active', v.dataset.view === view);
+    });
+    var idx = ORDER_STEP_ORDER.indexOf(view);
+    document.querySelectorAll('#orderPanel .panel__steps .step').forEach(function(s){
+      var sIdx = ORDER_STEP_ORDER.indexOf(s.dataset.step);
+      s.classList.toggle('is-current', sIdx === idx);
+      s.classList.toggle('is-done', idx > -1 && sIdx < idx);
+    });
+    updateOrderFooter(view);
+    var activeView = document.querySelector('#orderBody .order-view.is-active');
+    if (activeView){
+      activeView.setAttribute('tabindex', '-1');
+      activeView.focus({ preventScroll:false });
+    }
+    var body = document.getElementById('orderBody');
+    if (body) body.scrollTop = 0;
+  }
+
+  function updateOrderFooter(view){
+    var count = cartCount();
+    switch (view){
+      case 'menu':
+        orderBackBtn.style.display = 'none';
+        orderPrimaryBtn.style.display = 'inline-flex';
+        orderPrimaryBtn.disabled = count === 0;
+        orderPrimaryBtn.textContent = 'VIEW CART (' + count + ')';
+        orderPrimaryBtn.onclick = function(){ setOrderStepUI('cart'); };
+        break;
+      case 'cart':
+        orderBackBtn.style.display = 'inline-flex';
+        orderBackBtn.textContent = 'BACK TO MENU';
+        orderBackBtn.onclick = function(){ setOrderStepUI('menu'); };
+        orderPrimaryBtn.style.display = 'inline-flex';
+        orderPrimaryBtn.disabled = count === 0;
+        orderPrimaryBtn.textContent = 'CONTINUE TO DETAILS';
+        orderPrimaryBtn.onclick = function(){ setOrderStepUI('details'); };
+        break;
+      case 'details':
+        orderBackBtn.style.display = 'inline-flex';
+        orderBackBtn.textContent = 'BACK';
+        orderBackBtn.onclick = function(){ setOrderStepUI('cart'); };
+        orderPrimaryBtn.style.display = 'inline-flex';
+        orderPrimaryBtn.disabled = false;
+        orderPrimaryBtn.textContent = 'REVIEW ORDER';
+        orderPrimaryBtn.onclick = function(){
+          if (validateOrder()){ renderOrderReview(); setOrderStepUI('review'); }
+        };
+        break;
+      case 'review':
+        orderBackBtn.style.display = 'inline-flex';
+        orderBackBtn.textContent = 'BACK';
+        orderBackBtn.onclick = function(){ setOrderStepUI('details'); };
+        orderPrimaryBtn.style.display = 'inline-flex';
+        orderPrimaryBtn.disabled = false;
+        orderPrimaryBtn.textContent = 'PLACE ORDER';
+        orderPrimaryBtn.onclick = handlePlaceOrder;
+        break;
+      case 'confirmation':
+        orderBackBtn.style.display = 'none';
+        orderPrimaryBtn.style.display = 'inline-flex';
+        orderPrimaryBtn.disabled = false;
+        orderPrimaryBtn.textContent = 'CONTINUE EXPLORING';
+        orderPrimaryBtn.onclick = function(){ closeOrderPanel(); };
+        break;
+      case 'error':
+        orderBackBtn.style.display = 'none';
+        orderPrimaryBtn.style.display = 'inline-flex';
+        orderPrimaryBtn.disabled = false;
+        orderPrimaryBtn.textContent = 'TRY AGAIN';
+        orderPrimaryBtn.onclick = function(){ setOrderStepUI('review'); };
+        break;
+    }
+  }
+
+  function buildOrderData(){
+    return {
+      items: cartDetailed().map(function(d){ return { id: d.item.id, name: d.item.name, quantity: d.qty }; }),
+      orderType: activeOrderType,
+      customer: {
+        name: document.getElementById('orderName').value.trim(),
+        phone: document.getElementById('orderPhone').value.trim(),
+        email: document.getElementById('orderEmail').value.trim()
+      },
+      address: activeOrderType === 'delivery' ? document.getElementById('orderAddress').value.trim() : '',
+      notes: document.getElementById('orderNotes').value.trim(),
+      submittedAt: new Date().toISOString()
+    };
+  }
+
+  function handlePlaceOrder(){
+    orderPrimaryBtn.disabled = true;
+    orderPrimaryBtn.textContent = 'PLACING ORDER\u2026';
+    var orderData = buildOrderData();
+    submitOrder(orderData).then(function(result){
+      document.getElementById('orderConfName').textContent = orderData.customer.name || 'Guest';
+      document.getElementById('orderConfRef').textContent = result.reference;
+      document.getElementById('orderConfType').textContent = orderData.orderType === 'delivery' ? 'Delivery' : 'Pickup';
+      clearCart();
+      setOrderStepUI('confirmation');
+    }).catch(function(err){
+      console.error('Dallaspuram: order submission failed', err);
+      setOrderStepUI('error');
+    });
+  }
+
+  /* ---------------------------------------------------- */
+  /* BACKEND-READY SUBMISSION FUNCTIONS                      */
+  /* Structured so a real backend can be connected later by  */
+  /* flipping PROTOTYPE_MODE to false — nothing else needs   */
+  /* to change on the calling side.                           */
+  /* ---------------------------------------------------- */
+  function submitOrder(orderData){
+    return new Promise(function(resolve, reject){
+      if (!PROTOTYPE_MODE){
+        fetch(APP_CONFIG.orderEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData)
+        }).then(function(res){
+          if (!res.ok) throw new Error('Order request failed with status ' + res.status);
+          return res.json();
+        }).then(resolve).catch(reject);
+        return;
+      }
+      // Prototype fallback: simulate a network round trip and
+      // persist locally so the flow can be demonstrated end to end.
+      setTimeout(function(){
+        try{
+          var reference = generateReference('DAL');
+          var record = Object.assign({}, orderData, { reference: reference, prototype: true });
+          var existing = safeGetJSON(ORDERS_STORAGE_KEY, []);
+          existing.push(record);
+          safeSetJSON(ORDERS_STORAGE_KEY, existing);
+          resolve({ ok: true, reference: reference, prototype: true });
+        } catch(err){
+          reject(err);
+        }
+      }, 600);
+    });
+  }
+
+  function submitReservation(reservationData){
+    return new Promise(function(resolve, reject){
+      if (!PROTOTYPE_MODE){
+        fetch(APP_CONFIG.reservationEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(reservationData)
+        }).then(function(res){
+          if (!res.ok) throw new Error('Reservation request failed with status ' + res.status);
+          return res.json();
+        }).then(resolve).catch(reject);
+        return;
+      }
+      setTimeout(function(){
+        try{
+          var reference = generateReference('DAL-RES');
+          var record = Object.assign({}, reservationData, { reference: reference, prototype: true });
+          var existing = safeGetJSON(RESERVATIONS_STORAGE_KEY, []);
+          existing.push(record);
+          safeSetJSON(RESERVATIONS_STORAGE_KEY, existing);
+          resolve({ ok: true, reference: reference, prototype: true });
+        } catch(err){
+          reject(err);
+        }
+      }, 600);
+    });
+  }
+
+  /* ---------------------------------------------------- */
+  /* RESERVATION PANEL STEP CONTROL                          */
+  /* ---------------------------------------------------- */
+  function setReservationStepUI(view){
+    currentReservationView = view;
+    document.querySelectorAll('#reservationBody .order-view').forEach(function(v){
+      v.classList.toggle('is-active', v.dataset.view === view);
+    });
+    updateReservationFooter(view);
+    var activeView = document.querySelector('#reservationBody .order-view.is-active');
+    if (activeView){
+      activeView.setAttribute('tabindex', '-1');
+      activeView.focus({ preventScroll:false });
+    }
+    var body = document.getElementById('reservationBody');
+    if (body) body.scrollTop = 0;
+  }
+
+  function updateReservationFooter(view){
+    switch (view){
+      case 'form':
+        reservationBackBtn.style.display = 'none';
+        reservationPrimaryBtn.disabled = false;
+        reservationPrimaryBtn.textContent = 'SUBMIT RESERVATION';
+        reservationPrimaryBtn.onclick = handleSubmitReservation;
+        break;
+      case 'confirmation':
+        reservationBackBtn.style.display = 'none';
+        reservationPrimaryBtn.disabled = false;
+        reservationPrimaryBtn.textContent = 'CONTINUE EXPLORING';
+        reservationPrimaryBtn.onclick = function(){ closeReservationPanel(); };
+        break;
+      case 'error':
+        reservationBackBtn.style.display = 'inline-flex';
+        reservationBackBtn.textContent = 'EDIT DETAILS';
+        reservationBackBtn.onclick = function(){ setReservationStepUI('form'); };
+        reservationPrimaryBtn.disabled = false;
+        reservationPrimaryBtn.textContent = 'TRY AGAIN';
+        reservationPrimaryBtn.onclick = handleSubmitReservation;
+        break;
+    }
+  }
+
+  function buildReservationData(){
+    return {
+      name: document.getElementById('resName').value.trim(),
+      phone: document.getElementById('resPhone').value.trim(),
+      email: document.getElementById('resEmail').value.trim(),
+      date: document.getElementById('resDate').value,
+      time: document.getElementById('resTime').value,
+      guests: document.getElementById('resGuests').value,
+      request: document.getElementById('resRequest').value.trim(),
+      submittedAt: new Date().toISOString()
+    };
+  }
+
+  function handleSubmitReservation(){
+    if (!validateReservation()) return;
+    reservationPrimaryBtn.disabled = true;
+    reservationPrimaryBtn.textContent = 'SUBMITTING\u2026';
+    var data = buildReservationData();
+    submitReservation(data).then(function(result){
+      document.getElementById('resConfName').textContent = data.name || 'Guest';
+      document.getElementById('resConfDate').textContent = formatDateDisplay(data.date);
+      document.getElementById('resConfTime').textContent = data.time;
+      document.getElementById('resConfGuests').textContent = data.guests;
+      document.getElementById('resConfRef').textContent = result.reference;
+      setReservationStepUI('confirmation');
+    }).catch(function(err){
+      console.error('Dallaspuram: reservation submission failed', err);
+      setReservationStepUI('error');
+    });
+  }
+
+  function isReservationFormEmpty(){
+    var ids = ['resName','resPhone','resEmail','resDate','resTime','resGuests','resRequest'];
+    return ids.every(function(id){
+      var el = document.getElementById(id);
+      return !el || !el.value;
+    });
+  }
+
+  /* ---------------------------------------------------- */
+  /* TIME SLOTS — derived from the restaurant's published    */
+  /* kitchen hours already shown elsewhere on this page.     */
+  /* Actual availability is ultimately backend-controlled.   */
+  /* ---------------------------------------------------- */
+  function generateTimeSlots(){
+    var slots = [];
+    for (var mins = 12 * 60; mins <= 23 * 60; mins += 30){
+      var h24 = Math.floor(mins / 60);
+      var m = mins % 60;
+      var period = h24 >= 12 ? 'PM' : 'AM';
+      var h12 = h24 % 12; if (h12 === 0) h12 = 12;
+      slots.push(h12 + ':' + (m === 0 ? '00' : m) + ' ' + period);
+    }
+    return slots;
+  }
+  (function populateTimeSlots(){
+    if (!resTimeSelect) return;
+    generateTimeSlots().forEach(function(label){
+      var opt = document.createElement('option');
+      opt.value = label;
+      opt.textContent = label;
+      resTimeSelect.appendChild(opt);
+    });
+  })();
+  (function setMinReservationDate(){
+    if (!resDateInput) return;
+    var today = new Date();
+    var y = today.getFullYear();
+    var m = String(today.getMonth() + 1).padStart(2, '0');
+    var d = String(today.getDate()).padStart(2, '0');
+    resDateInput.min = y + '-' + m + '-' + d;
+  })();
+
+  /* ---------------------------------------------------- */
+  /* FOCUS TRAP + BODY SCROLL LOCK                           */
+  /* ---------------------------------------------------- */
+  function lockBodyScroll(){ document.body.classList.add('modal-open'); }
+  function unlockBodyScroll(){
+    if (!orderOverlay.classList.contains('is-open') && !reservationOverlay.classList.contains('is-open')){
+      document.body.classList.remove('modal-open');
+    }
+  }
+  function trapFocus(e, container){
+    var nodes = container.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
+    var list = Array.prototype.filter.call(nodes, function(el){ return el.offsetParent !== null; });
+    if (!list.length) return;
+    var first = list[0], last = list[list.length - 1];
+    if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  }
+  function onOrderKeydown(e){
+    if (e.key === 'Escape'){ closeOrderPanel(); return; }
+    if (e.key === 'Tab') trapFocus(e, orderPanel);
+  }
+  function onReservationKeydown(e){
+    if (e.key === 'Escape'){ closeReservationPanel(); return; }
+    if (e.key === 'Tab') trapFocus(e, reservationPanel);
+  }
+
+  /* ---------------------------------------------------- */
+  /* OPEN / CLOSE PANELS                                     */
+  /* ---------------------------------------------------- */
+  function openOrderPanel(trigger){
+    if (reservationOverlay.classList.contains('is-open')) closeReservationPanel(true);
+    lastFocusedOrderTrigger = trigger || document.activeElement;
+    orderOverlay.classList.add('is-open');
+    orderOverlay.setAttribute('aria-hidden', 'false');
+    lockBodyScroll();
+    renderOrderMenuList();
+    renderCartList();
+    setOrderStepUI(currentOrderView === 'confirmation' || currentOrderView === 'error' ? 'menu' : currentOrderView);
+    document.addEventListener('keydown', onOrderKeydown);
+    setTimeout(function(){ document.getElementById('orderClose').focus(); }, 50);
+  }
+  function closeOrderPanel(skipFocusReturn){
+    if (!orderOverlay.classList.contains('is-open')) return;
+    orderOverlay.classList.remove('is-open');
+    orderOverlay.setAttribute('aria-hidden', 'true');
+    unlockBodyScroll();
+    document.removeEventListener('keydown', onOrderKeydown);
+    if (!skipFocusReturn && lastFocusedOrderTrigger && typeof lastFocusedOrderTrigger.focus === 'function'){
+      lastFocusedOrderTrigger.focus();
+    }
+  }
+
+  function openReservationPanel(trigger){
+    if (orderOverlay.classList.contains('is-open')) closeOrderPanel(true);
+    lastFocusedReservationTrigger = trigger || document.activeElement;
+    reservationOverlay.classList.add('is-open');
+    reservationOverlay.setAttribute('aria-hidden', 'false');
+    lockBodyScroll();
+    setReservationStepUI('form');
+    document.addEventListener('keydown', onReservationKeydown);
+    setTimeout(function(){
+      var nameField = document.getElementById('resName');
+      if (nameField) nameField.focus();
+    }, 60);
+  }
+  function closeReservationPanel(skipFocusReturn){
+    if (!reservationOverlay.classList.contains('is-open')) return;
+    reservationOverlay.classList.remove('is-open');
+    reservationOverlay.setAttribute('aria-hidden', 'true');
+    unlockBodyScroll();
+    document.removeEventListener('keydown', onReservationKeydown);
+    if (!skipFocusReturn && lastFocusedReservationTrigger && typeof lastFocusedReservationTrigger.focus === 'function'){
+      lastFocusedReservationTrigger.focus();
+    }
+  }
+
+  /* ---------------------------------------------------- */
+  /* EVENT WIRING                                            */
+  /* ---------------------------------------------------- */
+  document.querySelectorAll('.js-open-order').forEach(function(el){
+    el.addEventListener('click', function(e){ e.preventDefault(); openOrderPanel(el); });
+  });
+  document.querySelectorAll('.js-open-reservation').forEach(function(el){
+    el.addEventListener('click', function(e){ e.preventDefault(); openReservationPanel(el); });
+  });
+
+  var menuTrack = document.getElementById('menuTrack');
+  if (menuTrack){
+    menuTrack.addEventListener('click', function(e){
+      var btn = e.target.closest('.js-menu-add');
+      if (!btn) return;
+      var card = btn.closest('.menu-card');
+      if (!card) return;
+      var id = card.getAttribute('data-item-id');
+      addToCart(id, 1);
+      showToast('Added to your order');
+      openOrderPanel(btn);
+    });
+  }
+
+  document.getElementById('orderClose').addEventListener('click', function(){ closeOrderPanel(); });
+  document.getElementById('reservationClose').addEventListener('click', function(){ closeReservationPanel(); });
+
+  orderOverlay.addEventListener('mousedown', function(e){
+    if (e.target !== orderOverlay) return;
+    if (['menu','cart','confirmation','error'].indexOf(currentOrderView) !== -1) closeOrderPanel();
+  });
+  reservationOverlay.addEventListener('mousedown', function(e){
+    if (e.target !== reservationOverlay) return;
+    if (currentReservationView === 'confirmation' || currentReservationView === 'error' || isReservationFormEmpty()){
+      closeReservationPanel();
+    }
+  });
+
+  if (orderMenuList){
+    orderMenuList.addEventListener('click', function(e){
+      var addBtn = e.target.closest('[data-add-item]');
+      if (addBtn){ addToCart(addBtn.getAttribute('data-add-item'), 1); return; }
+      var inc = e.target.closest('[data-qty-increase]');
+      if (inc){ var incId = inc.getAttribute('data-qty-increase'); setCartQty(incId, (cart[incId] || 0) + 1); return; }
+      var dec = e.target.closest('[data-qty-decrease]');
+      if (dec){ var decId = dec.getAttribute('data-qty-decrease'); setCartQty(decId, (cart[decId] || 0) - 1); return; }
+    });
+  }
+  if (cartList){
+    cartList.addEventListener('click', function(e){
+      var inc = e.target.closest('[data-qty-increase]');
+      if (inc){ var incId = inc.getAttribute('data-qty-increase'); setCartQty(incId, (cart[incId] || 0) + 1); return; }
+      var dec = e.target.closest('[data-qty-decrease]');
+      if (dec){ var decId = dec.getAttribute('data-qty-decrease'); setCartQty(decId, (cart[decId] || 0) - 1); return; }
+      var rem = e.target.closest('[data-cart-remove]');
+      if (rem){ removeFromCart(rem.getAttribute('data-cart-remove')); return; }
+    });
+  }
+  var cartClearBtn = document.getElementById('cartClearBtn');
+  if (cartClearBtn) cartClearBtn.addEventListener('click', function(){ clearCart(); });
+
+  var orderTypeDeliveryBtn = document.getElementById('orderTypeDelivery');
+  var orderTypePickupBtn = document.getElementById('orderTypePickup');
+  if (orderTypeDeliveryBtn) orderTypeDeliveryBtn.addEventListener('click', function(){ setOrderType('delivery'); });
+  if (orderTypePickupBtn) orderTypePickupBtn.addEventListener('click', function(){ setOrderType('pickup'); });
+
+  /* ---------------------------------------------------- */
+  /* INITIAL RENDER                                          */
+  /* ---------------------------------------------------- */
+  setOrderType('delivery');
+  updateCartBadges();
+  renderOrderMenuList();
+  renderCartList();
+
+})();
 </script>
 </body>
 </html>
