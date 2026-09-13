@@ -26,6 +26,8 @@
 
     --nav-h: 78px;
     --nav-h-mobile: 64px;
+    --nav-total-mobile: calc(var(--nav-h-mobile) + env(safe-area-inset-top, 0px));
+    --nav-total: calc(var(--nav-h) + env(safe-area-inset-top, 0px));
 
     /* ---------------------------------- */
     /* GLOBAL CONTENT ALIGNMENT SYSTEM     */
@@ -157,6 +159,19 @@
     display:flex;
     flex-direction:column;
     background: transparent;
+    padding-top: var(--nav-total-mobile);
+  }
+  @media (min-width:768px){
+    .hero{ padding-top: var(--nav-total); }
+  }
+
+  /* Anchor targets: since the navbar is now fixed, offset scroll
+     targets by the navbar height so headings aren't hidden beneath it. */
+  #story, #menu, #gallery, #visit-us{
+    scroll-margin-top: var(--nav-total-mobile);
+  }
+  @media (min-width:768px){
+    #story, #menu, #gallery, #visit-us{ scroll-margin-top: var(--nav-total); }
   }
 
   /* subtle legibility scrim - warm, not darkening the artwork's palette.
@@ -184,15 +199,35 @@
      .site-container so the logo lines up with every section's
      content edge below it. */
   .nav{
-    position:relative; z-index:5;
-    height: var(--nav-h-mobile);
+    position:fixed; top:0; left:0; right:0; z-index:15;
+    height: var(--nav-total-mobile);
+    padding-top: env(safe-area-inset-top, 0px);
+    background: rgba(244,236,221,0.52);
+    -webkit-backdrop-filter: blur(16px) saturate(135%);
+    backdrop-filter: blur(16px) saturate(135%);
+    border-bottom: 1px solid rgba(36,30,26,0.09);
+    box-shadow: 0 6px 22px rgba(36,30,26,0.05);
+    transition: background .35s ease, box-shadow .35s ease, border-color .35s ease;
+  }
+  /* graceful fallback where backdrop-filter isn't supported: a slightly
+     more opaque solid warm surface so the nav stays fully readable */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
+    .nav{ background: rgba(244,236,221,0.94); }
+  }
+  .nav.is-scrolled{
+    background: rgba(244,236,221,0.72);
+    border-bottom-color: rgba(36,30,26,0.13);
+    box-shadow: 0 8px 26px rgba(36,30,26,0.08);
   }
   @media (min-width:768px){
-    .nav{ height:var(--nav-h); }
+    .nav{ height:var(--nav-total); }
   }
   .nav__row{
-    height:100%;
+    height: var(--nav-h-mobile);
     display:flex; align-items:center; justify-content:space-between;
+  }
+  @media (min-width:768px){
+    .nav__row{ height: var(--nav-h); }
   }
 
   .brand{ display:flex; align-items:center; gap:12px; }
@@ -1820,8 +1855,8 @@
       </a>
 
       <ul class="nav__links">
-        <li><a href="#menu">MENU</a></li>
         <li><a href="#story">OUR STORY</a></li>
+        <li><a href="#menu">MENU</a></li>
         <li><a href="#gallery">GALLERY</a></li>
         <li><a href="#visit-us">VISIT US</a></li>
       </ul>
@@ -2403,8 +2438,8 @@
 <div class="menu-panel" id="menuPanel" role="dialog" aria-modal="true" aria-label="Site menu">
   <button class="menu-panel__close" id="menuClose" aria-label="Close menu">✕</button>
   <ul>
-    <li><a href="#menu">Menu</a></li>
     <li><a href="#story">Our Story</a></li>
+    <li><a href="#menu">Menu</a></li>
     <li><a href="#gallery">Gallery</a></li>
     <li><a href="#visit-us">Visit Us</a></li>
   </ul>
@@ -2477,6 +2512,24 @@
   (function(){
     var y = document.getElementById('footerYear');
     if (y) y.textContent = new Date().getFullYear();
+  })();
+
+  // ---- Navbar glass: subtle intensification after scroll ----
+  (function(){
+    var nav = document.querySelector('.nav');
+    if (!nav) return;
+    var ticking = false;
+    function update(){
+      nav.classList.toggle('is-scrolled', window.scrollY > 8);
+      ticking = false;
+    }
+    window.addEventListener('scroll', function(){
+      if (!ticking){
+        requestAnimationFrame(update);
+        ticking = true;
+      }
+    }, { passive:true });
+    update();
   })();
 
   // ---- Mobile menu ----
