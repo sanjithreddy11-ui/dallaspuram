@@ -502,6 +502,11 @@
     font-size:10px; font-weight:700; letter-spacing:.16em;
     color: var(--charcoal-soft);
   }
+  /* New icon + chevron are mobile-only additions (see the
+     max-width:767.98px block below). Hidden by default here so
+     desktop's scroll-cue keeps its exact original two children
+     (text + animated line) and layout. */
+  .scroll-cue__mouse, .scroll-cue__chevron{ display:none; }
   .scroll-cue .line{
     width:1px; height:26px;
     background: linear-gradient(180deg, var(--charcoal-soft), transparent);
@@ -522,6 +527,7 @@
       animation:none !important; opacity:1 !important; transform:none !important;
     }
     .scroll-cue .line::after{ animation:none; top:40%; }
+    .scroll-cue__chevron{ animation:none; }
     .btn:hover{ transform:none; }
   }
 
@@ -531,10 +537,154 @@
     outline-offset:2px;
   }
 
-  /* small phones: keep hero comfortably scannable */
-  @media (max-width:360px){
-    .headline{ font-size: clamp(2rem, 8.6vw, 2.4rem); }
-    .info-row{ gap:16px 24px; }
+  /* ==================================================== */
+  /* MOBILE HERO REFINEMENT — purpose-built composition    */
+  /* ------------------------------------------------------ */
+  /* Scoped to max-width:767.98px — the exact inverse of the  */
+  /* min-width:768px "desktop" cutover already used for the   */
+  /* background, navbar, hero and every section above. Every  */
+  /* rule below is purely additive on top of the existing base */
+  /* + desktop overrides, so nothing here can ever be reached  */
+  /* at 768px and up: desktop is untouched by construction.    */
+  /* The approved assets/mobile-background.webp itself is not  */
+  /* referenced or altered anywhere in this block — only the   */
+  /* content layered on top of it changes.                     */
+  /* ==================================================== */
+  @media (max-width:767.98px){
+
+    /* -- navbar: shorter, logo-forward, lighter controls -- */
+    :root{ --nav-h-mobile: 58px; }
+
+    .brand img{
+      width: clamp(100px, 28vw, 150px);
+      height: auto;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .nav__cta.order.mobile-order{
+      border-radius: 999px;
+      padding: 11px 18px;
+      font-size: 11px;
+    }
+    .hamburger{
+      width: 42px; height: 42px;
+      border-radius: 50%;
+    }
+
+    /* -- hero content: begins right below the navbar, no forced
+       vertical centering, so the composition reads top-anchored
+       with the scroll cue naturally settling at the bottom of the
+       first screen instead of a huge dead zone in the middle -- */
+    .hero__content{
+      justify-content: flex-start;
+      padding-top: 22px;
+      padding-bottom: 22px;
+    }
+    .hero__text{ max-width: none; }
+
+    .eyebrow{
+      display:flex; align-items:center; gap:10px;
+      margin-bottom: 16px;
+    }
+    .eyebrow::before{
+      content:'';
+      width: 26px; height:1px;
+      background: var(--terracotta-deep);
+      opacity:.6;
+    }
+
+    /* editorial, visually dominant headline — no longer floored
+       near a single fixed size across the whole mobile range */
+    .headline{
+      font-size: clamp(2.85rem, 13.2vw, 3.75rem);
+      line-height: 1.04;
+      margin-bottom: 16px;
+    }
+
+    .supporting{
+      font-size: 15px;
+      line-height: 1.55;
+      max-width: 32ch;
+      margin-bottom: 22px;
+    }
+
+    /* full-width stacked CTAs, equal width, tighter gaps */
+    .cta-row{
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .cta-row .btn{
+      width: 100%;
+      justify-content: center;
+      padding: 15px 20px;
+      min-height: 52px;
+    }
+
+    /* one compact three-column info row, dividers included on
+       mobile (previously dividers only appeared at 768px+) */
+    .info-row{
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      gap: 0;
+      padding: 16px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .info-item{
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+      flex: 1 1 0;
+      min-width: 0;
+      padding: 0 6px;
+      border-right: 1px solid var(--line);
+    }
+    .info-item:last-child{ border-right: none; }
+    .info-item svg{ width: 19px; height: 19px; margin-top: 0; }
+    .info-item .label{ white-space: normal; font-size: 9.5px; }
+    .info-item .value{ white-space: normal; font-size: 12px; }
+
+    /* scroll cue: centered mouse icon + label + bouncing chevron,
+       replacing the desktop-style vertical drip line on phones */
+    .scroll-cue{
+      flex-wrap: wrap;
+      justify-content: center;
+      row-gap: 8px; column-gap: 8px;
+      padding-top: 18px;
+      padding-bottom: 22px;
+    }
+    .scroll-cue .line{ display:none; }
+    .scroll-cue__mouse{
+      display:block;
+      width:14px; height:22px;
+      color: var(--charcoal-soft);
+    }
+    .scroll-cue__chevron{
+      display:flex;
+      flex-basis:100%;
+      justify-content:center;
+      width:12px; height:6px;
+      margin: 0 auto;
+      color: var(--charcoal-soft);
+      animation: chevronBounce 1.6s ease-in-out infinite;
+    }
+    @keyframes chevronBounce{
+      0%,100%{ transform:translateY(0); opacity:.65; }
+      50%{ transform:translateY(3px); opacity:1; }
+    }
+  }
+
+  /* extremely narrow phones: shrink the info row a touch further
+     before ever changing the three-column structure */
+  @media (max-width:359.98px){
+    .headline{ font-size: clamp(2.5rem, 12.8vw, 2.9rem); }
+    .info-row{ gap:0; }
+    .info-item{ padding: 0 4px; gap:4px; }
+    .info-item svg{ width:16px; height:16px; }
+    .info-item .label{ font-size:8.6px; letter-spacing:.06em; }
+    .info-item .value{ font-size:11px; }
   }
 
   /* ==================================================== */
@@ -2310,7 +2460,7 @@
     <div class="nav__right">
       <a href="#reserve" class="nav__cta reserve js-open-reservation">RESERVE A TABLE</a>
       <a href="#order" class="nav__cta order js-open-order">ORDER ONLINE <span class="cart-badge" data-cart-badge hidden>0</span></a>
-      <a href="#order" class="nav__cta order mobile-order js-open-order">ORDER <span class="cart-badge" data-cart-badge hidden>0</span></a>
+      <a href="#order" class="nav__cta order mobile-order js-open-order">ORDER ONLINE <span class="cart-badge" data-cart-badge hidden>0</span></a>
       <button class="hamburger" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel">
         <span></span>
       </button>
@@ -2373,7 +2523,9 @@
   </div>
 
   <div class="scroll-cue site-container">
+    <svg class="scroll-cue__mouse" viewBox="0 0 20 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="1" y="1" width="18" height="30" rx="9"/><circle cx="10" cy="9" r="1.6" fill="currentColor" stroke="none"/></svg>
     <span>SCROLL TO EXPLORE</span>
+    <svg class="scroll-cue__chevron" viewBox="0 0 14 7" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M1 1l6 5 6-5"/></svg>
     <div class="line"></div>
   </div>
 </header>
