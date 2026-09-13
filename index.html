@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<link rel="preload" as="image" href="assets/hero-mobile.webp" media="(max-width: 767px)">
+<link rel="preload" as="image" href="assets/mobile-background.webp" media="(max-width: 767px)">
 <link rel="preload" as="image" href="assets/hero-desktop.webp" media="(min-width: 768px)">
 
 <style>
@@ -130,12 +130,20 @@
   .site-bg{
     position:absolute; inset:0;
     background-repeat:no-repeat;
-    background-image: url('assets/hero-mobile.webp');
+    /* MOBILE: single canonical background asset for the entire
+       mobile site. This is the ONLY place this image is declared —
+       every section scrolls transparently over this one fixed
+       layer, so the composition never restarts between sections. */
+    background-image: url('assets/mobile-background.webp');
     background-size: cover;
-    background-position: 32% center;
+    /* Anchored top-right so the jali/lattice + terracotta detail on
+       the right side of the vertical composition stays in frame
+       rather than being cropped by "center". */
+    background-position: top right;
   }
   @media (min-width:768px){
     .site-bg{
+      /* DESKTOP: unchanged — existing approved desktop background. */
       background-image: url('assets/hero-desktop.webp');
       background-position: center center;
     }
