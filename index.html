@@ -1,0 +1,2077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Dallaspuram — Telugu Kitchen & Bar</title>
+<meta name="description" content="Dallaspuram Telugu Kitchen & Bar — Telugu flavours, served with soul.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="preload" as="image" href="assets/hero-mobile.webp" media="(max-width: 767px)">
+<link rel="preload" as="image" href="assets/hero-desktop.webp" media="(min-width: 768px)">
+
+<style>
+  :root{
+    --cream:        #F4ECDD;
+    --cream-soft:    #EFE4CF;
+    --charcoal:      #241E1A;
+    --charcoal-soft: #362B24;
+    --terracotta:    #B85C2E;
+    --terracotta-deep:#9C4A24;
+    --wood:          #5C3A26;
+    --line:          rgba(36,30,26,0.16);
+
+    --nav-h: 78px;
+    --nav-h-mobile: 64px;
+
+    /* ---------------------------------- */
+    /* GLOBAL CONTENT ALIGNMENT SYSTEM     */
+    /* ---------------------------------- */
+    /* Every major section anchors to this single container so the
+       Hero, Story and any future section share the exact same
+       left/right content boundary. No section may define its own
+       one-off horizontal margin or gutter. */
+    --container-max: 1360px;
+    --page-gutter: 20px;
+
+    /* ---------------------------------- */
+    /* GLOBAL SECTION SPACING SYSTEM       */
+    /* ---------------------------------- */
+    /* Single source of truth for the empty space BETWEEN major
+       sections (Hero/Story/Menu/Gallery). Each section's wrapper
+       spends half of this value on its own top padding and half on
+       its own bottom padding, so two adjacent sections always add up
+       to exactly one --section-space gap — never a random, one-off
+       margin per section. This does NOT touch the whitespace inside
+       a section (headline-to-copy, card gaps, etc.) — only the
+       transition between sections. */
+    --section-space: 56px;
+  }
+  @media (min-width:768px){
+    :root{ --page-gutter: clamp(40px, 5vw, 88px); --section-space: 84px; }
+  }
+  @media (min-width:1024px){
+    :root{ --section-space: 104px; }
+  }
+  @media (min-width:1440px){
+    :root{ --section-space: 128px; }
+  }
+
+  *,*::before,*::after{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    font-family:'Manrope', sans-serif;
+    color: var(--charcoal);
+    background: var(--charcoal);
+    -webkit-font-smoothing: antialiased;
+  }
+  img{ max-width:100%; display:block; }
+  a{ color:inherit; text-decoration:none; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  /* ---------------------------------- */
+  /* GLOBAL CONTENT CONTAINER            */
+  /* ---------------------------------- */
+  /* MASTER LEFT CONTENT EDGE.
+     This is the ONLY place page gutters are computed. The box itself
+     is centered on wide screens, but because its width already has
+     the gutter baked in (rather than added via padding), the left
+     INNER edge always sits at exactly --page-gutter from the
+     viewport (until --container-max is reached). Nothing nested
+     inside may declare its own max-width + auto margins, or it will
+     re-center itself and break this edge — see .hero__text. */
+  .site-container{
+    width: min(calc(100% - (2 * var(--page-gutter))), var(--container-max));
+    margin-inline: auto;
+  }
+
+  /* ---------------------------------- */
+  /* LOADING INTRO                       */
+  /* ---------------------------------- */
+  #intro{
+    position:fixed; inset:0; z-index:9999;
+    background: var(--charcoal);
+    display:flex; align-items:center; justify-content:center;
+    transition: opacity .7s ease, visibility .7s ease;
+  }
+  #intro img{
+    width: 108px; height:108px; border-radius: 14px;
+    opacity:0; transform: scale(.92);
+    animation: introLogo 1.6s cubic-bezier(.22,.61,.36,1) forwards .15s;
+  }
+  #intro.hide{ opacity:0; visibility:hidden; pointer-events:none; }
+  @keyframes introLogo{
+    0%{ opacity:0; transform:scale(.92); }
+    55%{ opacity:1; transform:scale(1); }
+    100%{ opacity:1; transform:scale(1); }
+  }
+  body.intro-active{ overflow:hidden; }
+
+  @media (prefers-reduced-motion: reduce){
+    #intro img{ animation: none; opacity:1; transform:scale(1); }
+  }
+
+  /* ---------------------------------- */
+  /* GLOBAL SITE BACKGROUND (fixed)      */
+  /* ---------------------------------- */
+  /* Single persistent Dallaspuram background layer shared by every
+     homepage section. It never scrolls, never restarts, and never
+     changes between sections — sections scroll transparently over it. */
+  .site-background{
+    position:fixed; inset:0; z-index:0;
+    pointer-events:none;
+  }
+  .site-bg{
+    position:absolute; inset:0;
+    background-repeat:no-repeat;
+    background-image: url('assets/hero-mobile.webp');
+    background-size: cover;
+    background-position: 32% center;
+  }
+  @media (min-width:768px){
+    .site-bg{
+      background-image: url('assets/hero-desktop.webp');
+      background-position: center center;
+    }
+  }
+
+  .site-content{
+    position:relative;
+    z-index:1;
+  }
+
+  /* ---------------------------------- */
+  /* HERO STRUCTURE                      */
+  /* ---------------------------------- */
+  .hero{
+    position:relative;
+    width:100%;
+    min-height: 100svh;
+    min-height: 100vh;
+    isolation: isolate;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    background: transparent;
+  }
+
+  /* subtle legibility scrim - warm, not darkening the artwork's palette.
+     Local to the Hero section only; the background image itself lives
+     in .site-bg and is never duplicated here. */
+  .hero__scrim{
+    position:absolute; inset:0; z-index:1;
+    background:
+      linear-gradient(180deg, rgba(36,30,26,0.30) 0%, rgba(36,30,26,0.02) 26%, rgba(36,30,26,0.02) 60%, rgba(36,30,26,0.42) 100%),
+      linear-gradient(90deg, rgba(244,236,221,0.30) 0%, rgba(244,236,221,0.06) 42%, rgba(244,236,221,0) 60%);
+    pointer-events:none;
+  }
+  @media (min-width:768px){
+    .hero__scrim{
+      background:
+        linear-gradient(180deg, rgba(36,30,26,0.24) 0%, rgba(36,30,26,0) 22%, rgba(36,30,26,0) 72%, rgba(36,30,26,0.30) 100%),
+        linear-gradient(90deg, rgba(244,236,221,0.34) 0%, rgba(244,236,221,0.08) 38%, rgba(244,236,221,0) 58%);
+    }
+  }
+
+  /* ---------------------------------- */
+  /* NAVIGATION                          */
+  /* ---------------------------------- */
+  /* .nav is a full-bleed bar; its inner row uses the SAME global
+     .site-container so the logo lines up with every section's
+     content edge below it. */
+  .nav{
+    position:relative; z-index:5;
+    height: var(--nav-h-mobile);
+  }
+  @media (min-width:768px){
+    .nav{ height:var(--nav-h); }
+  }
+  .nav__row{
+    height:100%;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand img{
+    width:48px; height:48px; border-radius:10px;
+    box-shadow: 0 2px 10px rgba(36,30,26,0.22);
+  }
+  @media (min-width:768px){
+    .brand img{ width:58px; height:58px; }
+  }
+
+  .nav__links{
+    display:none;
+    align-items:center;
+    gap:40px;
+    list-style:none;
+    margin:0; padding:0;
+  }
+  @media (min-width:1024px){
+    .nav__links{ display:flex; }
+  }
+  .nav__links a{
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:.09em;
+    color: var(--charcoal);
+    position:relative;
+    padding:6px 2px;
+  }
+  .nav__links a::after{
+    content:'';
+    position:absolute; left:0; bottom:0;
+    width:0%; height:1px;
+    background: var(--terracotta-deep);
+    transition: width .25s ease;
+  }
+  .nav__links a:hover::after,
+  .nav__links a:focus-visible::after{ width:100%; }
+
+  .nav__right{ display:flex; align-items:center; gap:14px; }
+
+  .nav__cta{
+    display:none;
+    font-size:12.5px;
+    font-weight:700;
+    letter-spacing:.08em;
+    padding:12px 20px;
+    border:1px solid var(--charcoal);
+    border-radius:2px;
+    white-space:nowrap;
+  }
+  @media (min-width:1024px){
+    .nav__cta.reserve{ display:inline-block; }
+  }
+  @media (min-width:768px){
+    .nav__cta.order{
+      display:inline-block;
+      background:var(--charcoal); color:var(--cream); border-color:var(--charcoal);
+    }
+  }
+  .nav__cta.order.mobile-order{
+    display:inline-flex; align-items:center;
+    background:var(--charcoal); color:var(--cream); border-color:var(--charcoal);
+    padding:10px 14px; font-size:11.5px;
+  }
+  @media (min-width:768px){
+    .nav__cta.order.mobile-order{ display:none; }
+  }
+
+  .hamburger{
+    width:44px; height:44px;
+    display:flex; align-items:center; justify-content:center;
+    background:transparent; border:1px solid var(--line);
+    border-radius:2px;
+  }
+  .hamburger span, .hamburger span::before, .hamburger span::after{
+    content:''; display:block; position:relative;
+    width:18px; height:1.5px; background:var(--charcoal);
+    transition: transform .25s ease, opacity .25s ease;
+  }
+  .hamburger span::before{ position:absolute; top:-6px; }
+  .hamburger span::after{ position:absolute; top:6px; }
+  .hamburger[aria-expanded="true"] span{ background:transparent; }
+  .hamburger[aria-expanded="true"] span::before{ transform: translateY(6px) rotate(45deg); }
+  .hamburger[aria-expanded="true"] span::after{ transform: translateY(-6px) rotate(-45deg); }
+
+  /* ---------------------------------- */
+  /* MOBILE / OVERLAY MENU               */
+  /* ---------------------------------- */
+  .menu-panel{
+    position:fixed; inset:0; z-index:20;
+    background: var(--charcoal);
+    display:flex; flex-direction:column;
+    justify-content:center;
+    padding: 40px 32px;
+    opacity:0; visibility:hidden;
+    transition: opacity .35s ease, visibility .35s ease;
+  }
+  .menu-panel.open{ opacity:1; visibility:visible; }
+  .menu-panel__close{
+    position:absolute; top:20px; right:20px;
+    width:44px; height:44px; border:1px solid rgba(244,236,221,.3);
+    border-radius:2px; background:transparent; color:var(--cream);
+    display:flex; align-items:center; justify-content:center; font-size:20px;
+  }
+  .menu-panel ul{ list-style:none; margin:0; padding:0; }
+  .menu-panel li{ border-bottom:1px solid rgba(244,236,221,.14); }
+  .menu-panel a{
+    display:block; padding:18px 4px;
+    color:var(--cream); font-family:'Fraunces', serif;
+    font-size:26px; font-weight:400;
+  }
+  .menu-panel__ctas{ margin-top:28px; display:flex; flex-direction:column; gap:12px; }
+  .menu-panel__ctas a{
+    text-align:center; padding:14px; border-radius:2px;
+    font-family:'Manrope',sans-serif; font-size:13px; font-weight:700; letter-spacing:.08em;
+  }
+  .menu-panel__ctas a.order{ background:var(--cream); color:var(--charcoal); }
+  .menu-panel__ctas a.reserve{ border:1px solid rgba(244,236,221,.5); color:var(--cream); }
+
+  /* ---------------------------------- */
+  /* HERO CONTENT                        */
+  /* ---------------------------------- */
+  /* .hero__content only owns vertical rhythm now; horizontal edges
+     come entirely from the nested .site-container. */
+  .hero__content{
+    position:relative; z-index:5;
+    flex:1;
+    display:flex; flex-direction:column;
+    justify-content: center;
+    padding-top: 8px;
+    padding-bottom: 28px;
+  }
+  @media (min-width:768px){
+    .hero__content{ padding-top: 64px; padding-bottom: 56px; }
+  }
+  @media (min-width:1440px){
+    .hero__content{ padding-top: 72px; }
+  }
+
+  /* Text-measure cap only — deliberately NOT the alignment container.
+     No margin-inline:auto here: this must stay flush with the LEFT
+     edge of its parent .site-container, never centered, or it would
+     float off the master left edge that every other section shares. */
+  .hero__text{ max-width: 620px; margin-inline: 0; }
+  @media (min-width:768px){ .hero__text{ max-width:760px; } }
+  @media (min-width:1440px){ .hero__text{ max-width:820px; } }
+
+  .eyebrow{
+    font-size:11.5px;
+    font-weight:700;
+    letter-spacing:.18em;
+    color: var(--terracotta-deep);
+    margin:0 0 14px;
+    opacity:0; transform:translateY(10px);
+    animation: rise .7s ease forwards .45s;
+  }
+
+  .headline{
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    font-size: clamp(2.3rem, 8vw, 3.6rem);
+    line-height:1.08;
+    letter-spacing:-.01em;
+    margin: 0 0 18px;
+    opacity:0; transform:translateY(14px);
+    animation: rise .8s ease forwards .58s;
+  }
+  @media (min-width:768px){
+    .headline{ font-size: clamp(3.2rem, 4.6vw, 4.6rem); margin-bottom:22px; }
+  }
+  .headline .warm{ color: var(--terracotta-deep); }
+  .headline .dark{ color: var(--charcoal); }
+
+  .supporting{
+    font-size:15.5px;
+    line-height:1.6;
+    color: var(--charcoal-soft);
+    max-width:44ch;
+    margin:0 0 28px;
+    opacity:0; transform:translateY(14px);
+    animation: rise .8s ease forwards .7s;
+  }
+  @media (min-width:768px){
+    .supporting{ font-size:16.5px; max-width:42ch; margin-bottom:34px; }
+  }
+
+  .cta-row{
+    display:flex; flex-wrap:wrap; gap:14px;
+    margin-bottom:34px;
+    opacity:0; transform:translateY(14px);
+    animation: rise .8s ease forwards .82s;
+  }
+  .btn{
+    display:inline-flex; align-items:center; gap:9px;
+    padding:16px 24px;
+    font-size:12.5px; font-weight:700; letter-spacing:.09em;
+    border-radius:2px;
+    min-height:50px;
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+  }
+  .btn:hover{ transform: translateY(-1px); }
+  .btn.primary{
+    background: var(--charcoal); color: var(--cream);
+    box-shadow: 0 6px 18px rgba(36,30,26,.28);
+  }
+  .btn.primary:hover{ background:#31281f; }
+  .btn.secondary{
+    background: rgba(244,236,221,.55);
+    color: var(--charcoal);
+    border:1px solid rgba(36,30,26,.55);
+    backdrop-filter: blur(2px);
+  }
+  .btn.secondary:hover{ background: rgba(244,236,221,.8); }
+  .btn .arrow{ transition: transform .2s ease; }
+  .btn:hover .arrow{ transform: translateX(3px); }
+
+  .info-row{
+    display:flex; flex-wrap:wrap;
+    gap: 22px 34px;
+    opacity:0; transform:translateY(14px);
+    animation: rise .8s ease forwards .94s;
+  }
+  .info-item{
+    display:flex; align-items:flex-start; gap:10px;
+    flex:0 0 auto;
+  }
+  .info-item svg{ flex:none; width:18px; height:18px; margin-top:2px; color: var(--terracotta-deep); }
+  .info-item .label{
+    font-size:10.5px; font-weight:700; letter-spacing:.1em;
+    color: var(--charcoal-soft); margin:0 0 2px;
+    white-space:nowrap;
+  }
+  .info-item .value{ font-size:13.5px; font-weight:600; color: var(--charcoal); white-space:nowrap; }
+
+  @media (min-width:768px){
+    .info-row{ flex-wrap:nowrap; gap:0; }
+    .info-item{ padding-right:32px; margin-right:32px; border-right:1px solid var(--line); }
+    .info-item:last-child{ border-right:none; margin-right:0; padding-right:0; }
+  }
+
+  @keyframes rise{
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  /* ---------------------------------- */
+  /* SCROLL INDICATOR                    */
+  /* ---------------------------------- */
+  .scroll-cue{
+    position:relative; z-index:5;
+    display:flex; align-items:center; gap:10px;
+    padding-bottom: 20px;
+    opacity:0;
+    animation: fadeIn 1s ease forwards 1.3s;
+  }
+  @media (min-width:768px){
+    .scroll-cue{ padding-bottom: 26px; }
+  }
+  .scroll-cue span{
+    font-size:10px; font-weight:700; letter-spacing:.16em;
+    color: var(--charcoal-soft);
+  }
+  .scroll-cue .line{
+    width:1px; height:26px;
+    background: linear-gradient(180deg, var(--charcoal-soft), transparent);
+    position:relative; overflow:hidden;
+  }
+  .scroll-cue .line::after{
+    content:''; position:absolute; left:0; top:-100%;
+    width:100%; height:100%; background:var(--terracotta-deep);
+    animation: scrollDrip 1.8s ease-in-out infinite;
+  }
+  @keyframes scrollDrip{
+    0%{ top:-100%; } 60%{ top:100%; } 100%{ top:100%; }
+  }
+  @keyframes fadeIn{ to{ opacity:1; } }
+
+  @media (prefers-reduced-motion: reduce){
+    .eyebrow,.headline,.supporting,.cta-row,.info-row,.scroll-cue{
+      animation:none !important; opacity:1 !important; transform:none !important;
+    }
+    .scroll-cue .line::after{ animation:none; top:40%; }
+    .btn:hover{ transform:none; }
+  }
+
+  /* focus states */
+  a:focus-visible, button:focus-visible{
+    outline: 2px solid var(--terracotta-deep);
+    outline-offset:2px;
+  }
+
+  /* small phones: keep hero comfortably scannable */
+  @media (max-width:360px){
+    .headline{ font-size: clamp(2rem, 8.6vw, 2.4rem); }
+    .info-row{ gap:16px 24px; }
+  }
+
+  /* ==================================================== */
+  /* SECTION 02 — DALLASPURAM STORY                        */
+  /* ==================================================== */
+
+  .story{
+    position:relative;
+    background: transparent;
+    overflow:hidden;
+    isolation:isolate;
+  }
+  /* Local legibility veil only — the exact same Dallaspuram background
+     from .site-bg remains visible through it. No new background image,
+     no solid fill, no hard-edged panel. */
+  .story__scrim{
+    position:absolute; inset:0; z-index:0;
+    pointer-events:none;
+    background:
+      linear-gradient(180deg, rgba(36,30,26,0.20) 0%, rgba(36,30,26,0) 16%, rgba(36,30,26,0) 84%, rgba(36,30,26,0.20) 100%),
+      linear-gradient(90deg, rgba(244,236,221,0.42) 0%, rgba(244,236,221,0.14) 46%, rgba(244,236,221,0) 68%);
+  }
+  @media (min-width:1024px){
+    .story__scrim{
+      background:
+        linear-gradient(180deg, rgba(36,30,26,0.16) 0%, rgba(36,30,26,0) 14%, rgba(36,30,26,0) 86%, rgba(36,30,26,0.16) 100%),
+        linear-gradient(90deg, rgba(244,236,221,0.46) 0%, rgba(244,236,221,0.16) 42%, rgba(244,236,221,0) 62%);
+    }
+  }
+
+  /* .story__inner IS the global .site-container (shared class on the
+     same element in the markup) — it only adds vertical rhythm and
+     the two-column layout on top of the inherited horizontal edges. */
+  .story__inner{
+    position:relative; z-index:1;
+    padding-top: var(--section-space);
+    padding-bottom: calc(var(--section-space) / 2);
+    display:flex; flex-direction:column;
+    gap: 64px;
+  }
+  @media (min-width:1024px){
+    .story__inner{
+      flex-direction:row;
+      align-items:center;
+      gap: 72px;
+    }
+  }
+  @media (min-width:1440px){
+    .story__inner{ gap:96px; }
+  }
+
+  .story__content{ max-width:560px; }
+  @media (min-width:1024px){
+    .story__content{ flex:0 0 44%; max-width:520px; }
+  }
+
+  .story__label{
+    display:flex; align-items:baseline; gap:14px;
+    margin:0 0 22px;
+  }
+  .story__label .num{
+    font-family:'Fraunces', serif;
+    font-size:15px; font-weight:500;
+    color: var(--terracotta-deep);
+  }
+  .story__label .txt{
+    font-size:11.5px; font-weight:700; letter-spacing:.18em;
+    color: var(--charcoal-soft);
+  }
+  .story__label::after{
+    content:'';
+    flex:1; height:1px; background:var(--line);
+    align-self:center;
+  }
+
+  .story__headline{
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    font-size: clamp(2.1rem, 6vw, 3.1rem);
+    line-height:1.14;
+    letter-spacing:-.01em;
+    margin:0 0 22px;
+  }
+  .story__headline .warm{ color:var(--terracotta-deep); }
+  .story__headline .dark{ color:var(--charcoal); }
+
+  .story__copy{
+    font-size:15.5px; line-height:1.65;
+    color: var(--charcoal-soft);
+    max-width:46ch;
+    margin:0 0 30px;
+  }
+  @media (min-width:768px){
+    .story__copy{ font-size:16.5px; }
+  }
+
+  .story__cta{
+    display:inline-flex; align-items:center; gap:9px;
+    font-size:12.5px; font-weight:700; letter-spacing:.09em;
+    color: var(--terracotta-deep);
+    padding-bottom:4px;
+    border-bottom:1px solid rgba(156,74,36,.35);
+    margin-bottom:56px;
+  }
+  .story__cta .arrow{ transition: transform .2s ease; }
+  .story__cta:hover .arrow{ transform: translateX(3px); }
+
+  /* ---- story pillars ---- */
+  .pillars{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:0;
+    border-top:1px solid var(--line);
+  }
+  @media (min-width:640px){
+    .pillars{ grid-template-columns: 1fr 1fr; }
+  }
+  .pillar{
+    padding:20px 0;
+    border-bottom:1px solid var(--line);
+  }
+  @media (min-width:640px){
+    .pillar{ padding:22px 24px 22px 0; }
+    .pillar:nth-child(odd){ border-right:1px solid var(--line); padding-right:24px; }
+    .pillar:nth-child(even){ padding-left:24px; }
+  }
+  .pillar__head{
+    display:flex; align-items:center; gap:10px;
+    margin:0 0 8px;
+  }
+  .pillar__num{
+    font-size:11px; font-weight:700; letter-spacing:.08em;
+    color: var(--terracotta-deep);
+  }
+  .pillar:nth-child(even) .pillar__num{ color: var(--wood); }
+  .pillar h3{
+    margin:0; font-size:13px; font-weight:700; letter-spacing:.06em;
+    color: var(--charcoal);
+  }
+  .pillar p{
+    margin:0; font-size:14px; line-height:1.55;
+    color: var(--charcoal-soft);
+    max-width:38ch;
+  }
+
+  /* ==================================================== */
+  /* SECTION 02 — PREMIUM EDITORIAL CAROUSEL               */
+  /* (replaces the old overlapping story-card stack)        */
+  /* ==================================================== */
+  .story__carousel{
+    position:relative;
+    flex:0 0 auto;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+  @media (min-width:1024px){
+    .story__carousel{ flex:1 1 auto; max-width:460px; margin-inline:auto; gap:22px; }
+  }
+
+  .carousel__viewport{
+    position:relative;
+    width:100%;
+    aspect-ratio: 4 / 5;
+    max-width: 420px;
+    margin-inline:auto;
+    border-radius:3px;
+    overflow:hidden;
+    box-shadow: 0 22px 48px rgba(36,30,26,.18);
+    background: linear-gradient(155deg, #E7D9BC, #D8C39C);
+    touch-action: pan-y;
+  }
+  @media (min-width:1024px){
+    .carousel__viewport{ max-width:none; }
+  }
+
+  .carousel__slide{
+    position:absolute; inset:0; margin:0;
+    opacity:0;
+    transform: translateX(18px);
+    transition: opacity .55s ease, transform .55s ease;
+    pointer-events:none;
+  }
+  .carousel__slide.is-active{
+    opacity:1;
+    transform: translateX(0);
+    pointer-events:auto;
+    z-index:2;
+  }
+  .carousel__slide.is-prev{ transform: translateX(-18px); }
+
+  .carousel__slide img{
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+  }
+
+  /* placeholder state — shown until real assets/imgN.png files are dropped in */
+  .carousel__slide img{ transition: opacity .3s ease; }
+  .carousel__slide.no-image img{ display:none; }
+  .carousel__slide.no-image{
+    display:flex; align-items:flex-end;
+  }
+  .carousel__slide.no-image::before{
+    content: attr(data-placeholder-label);
+    position:absolute; top:16px; left:20px;
+    font-size:10.5px; font-weight:700; letter-spacing:.12em;
+    color: rgba(36,30,26,.45);
+  }
+  .carousel__slide.no-image::after{
+    content:'';
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(135deg, rgba(36,30,26,.05) 0 2px, transparent 2px 14px);
+  }
+
+  .carousel__meta{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px;
+    max-width:420px;
+    margin-inline:auto;
+    width:100%;
+  }
+  @media (min-width:1024px){
+    .carousel__meta{ max-width:none; }
+  }
+
+  .carousel__info{ min-width:0; }
+  .carousel__info .num{
+    font-family:'Fraunces', serif;
+    font-size:13px; color: var(--terracotta-deep);
+    margin-right:8px;
+  }
+  .carousel__info .title{
+    font-size:13px; font-weight:700; letter-spacing:.1em;
+    color: var(--charcoal);
+  }
+  .carousel__info .desc{
+    margin:4px 0 0;
+    font-size:13px; color: var(--charcoal-soft);
+    max-width:34ch;
+  }
+
+  .carousel__controls{
+    display:flex; align-items:center; gap:14px;
+    flex:0 0 auto;
+  }
+  .carousel__arrow{
+    width:34px; height:34px;
+    display:flex; align-items:center; justify-content:center;
+    background:transparent;
+    border:1px solid var(--line);
+    border-radius:2px;
+    color: var(--charcoal);
+    font-size:14px;
+    transition: border-color .2s ease, transform .2s ease, background .2s ease;
+  }
+  .carousel__arrow:hover{ border-color: var(--terracotta-deep); background: rgba(184,92,46,.08); }
+  .carousel__arrow:active{ transform: scale(.94); }
+
+  .carousel__counter{
+    font-size:11.5px; font-weight:700; letter-spacing:.08em;
+    color: var(--charcoal-soft);
+    white-space:nowrap;
+  }
+  .carousel__counter .current{ color: var(--terracotta-deep); }
+
+  .carousel__hint{
+    display:block;
+    text-align:center;
+    font-size:10px; font-weight:700; letter-spacing:.14em;
+    color: var(--charcoal-soft);
+    opacity:.6;
+  }
+  @media (min-width:1024px){
+    .carousel__hint{ display:none; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .carousel__slide{ transition:none; }
+  }
+
+  /* ==================================================== */
+  /* SECTION 03 — THE MENU                                 */
+  /* Same global background, same .site-container master   */
+  /* left edge, same colors/typography as Hero and Story.   */
+  /* Text-led editorial cards on an auto-scrolling marquee. */
+  /* ==================================================== */
+  .menu{
+    position:relative;
+    background: transparent;
+    overflow:hidden;
+    isolation:isolate;
+  }
+  /* Legibility veil only — identical technique to .hero__scrim /
+     .story__scrim, reused rather than reinvented. */
+  .menu__scrim{
+    position:absolute; inset:0; z-index:0;
+    pointer-events:none;
+    background:
+      linear-gradient(180deg, rgba(36,30,26,0.20) 0%, rgba(36,30,26,0) 16%, rgba(36,30,26,0) 84%, rgba(36,30,26,0.20) 100%),
+      linear-gradient(90deg, rgba(244,236,221,0.42) 0%, rgba(244,236,221,0.14) 46%, rgba(244,236,221,0) 68%);
+  }
+  @media (min-width:1024px){
+    .menu__scrim{
+      background:
+        linear-gradient(180deg, rgba(36,30,26,0.16) 0%, rgba(36,30,26,0) 14%, rgba(36,30,26,0) 86%, rgba(36,30,26,0.16) 100%),
+        linear-gradient(90deg, rgba(244,236,221,0.46) 0%, rgba(244,236,221,0.16) 42%, rgba(244,236,221,0) 62%);
+    }
+  }
+
+  /* .menu__inner IS the global .site-container (shared class on the
+     same element, exactly like .story__inner / .kitchen__inner) —
+     it only adds vertical rhythm, never a new left edge. */
+  .menu__inner{
+    position:relative; z-index:1;
+    padding-top: calc(var(--section-space) / 2);
+    padding-bottom: calc(var(--section-space) / 2);
+    display:flex; flex-direction:column;
+    gap: 44px;
+  }
+  @media (min-width:768px){
+    .menu__inner{ gap:52px; }
+  }
+
+  .menu__head{ max-width:640px; }
+
+  .menu__label{
+    display:flex; align-items:baseline; gap:14px;
+    margin:0 0 22px;
+  }
+  .menu__label .num{
+    font-family:'Fraunces', serif;
+    font-size:15px; font-weight:500;
+    color: var(--terracotta-deep);
+  }
+  .menu__label .txt{
+    font-size:11.5px; font-weight:700; letter-spacing:.18em;
+    color: var(--charcoal-soft);
+  }
+  .menu__label::after{
+    content:'';
+    flex:1; height:1px; background:var(--line);
+    align-self:center;
+  }
+
+  .menu__headline{
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    font-size: clamp(2.1rem, 6vw, 3.1rem);
+    line-height:1.14;
+    letter-spacing:-.01em;
+    margin:0 0 22px;
+  }
+  .menu__headline .warm{ color:var(--terracotta-deep); }
+  .menu__headline .dark{ color:var(--charcoal); }
+
+  .menu__copy{
+    font-size:15.5px; line-height:1.65;
+    color: var(--charcoal-soft);
+    max-width:52ch;
+    margin:0 0 18px;
+  }
+  @media (min-width:768px){
+    .menu__copy{ font-size:16.5px; }
+  }
+
+  .menu__hint{
+    display:flex; align-items:center; gap:8px;
+    font-size:11px; font-weight:700; letter-spacing:.1em;
+    color: var(--terracotta-deep);
+    margin:0;
+  }
+  .menu__hint .dot{ color: var(--charcoal-soft); }
+
+  /* ---- marquee ---- */
+  .menu__marquee{ width:100%; }
+
+  .menu__viewport{
+    position:relative;
+    width:100%;
+    overflow:hidden;
+    touch-action: pan-y;
+    cursor: grab;
+  }
+  .menu__viewport:active{ cursor: grabbing; }
+
+  .menu__track{
+    display:flex;
+    align-items:stretch;
+    gap:20px;
+    list-style:none;
+    margin:0; padding:0;
+    will-change: transform;
+  }
+  @media (min-width:768px){
+    .menu__track{ gap:24px; }
+  }
+
+  .menu-card{
+    flex:0 0 auto;
+    width: 78vw;
+    max-width:300px;
+    padding:26px 22px;
+    background: rgba(244,236,221,.5);
+    border:1px solid var(--line);
+    border-radius:2px;
+    transition: border-color .35s ease, background .35s ease;
+  }
+  @media (min-width:640px){
+    .menu-card{ width:300px; }
+  }
+  @media (min-width:1440px){
+    .menu-card{ width:310px; padding:30px 26px; }
+  }
+  .menu-card.is-focus{
+    border-color: rgba(156,74,36,.4);
+    background: rgba(244,236,221,.72);
+  }
+
+  .menu-card__top{
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:16px;
+  }
+  .menu-card__num{
+    font-family:'Fraunces', serif;
+    font-size:13px;
+    color: var(--terracotta-deep);
+  }
+  .menu-card__badge{
+    font-size:9.5px; font-weight:700; letter-spacing:.1em;
+    color: var(--wood);
+    border:1px solid rgba(92,58,38,.4);
+    padding:3px 8px;
+    border-radius:2px;
+    text-transform:uppercase;
+  }
+
+  .menu-card__title{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:19px;
+    letter-spacing:-.01em;
+    color: var(--charcoal);
+    margin:0 0 10px;
+  }
+  .menu-card__desc{
+    font-size:13.5px; line-height:1.55;
+    color: var(--charcoal-soft);
+    margin:0 0 18px;
+  }
+  .menu-card__cta{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:10.5px; font-weight:700; letter-spacing:.08em;
+    color: var(--terracotta-deep);
+  }
+
+  /* ---- footer: progress + optional pause ---- */
+  .menu__footer{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:20px;
+  }
+  .menu__progress{
+    display:flex; align-items:center; gap:10px;
+    font-size:10.5px; font-weight:700; letter-spacing:.1em;
+    color: var(--charcoal-soft);
+  }
+  .menu__progress-bar{
+    width:96px; height:1px;
+    background: var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  .menu__progress-bar::after{
+    content:'';
+    position:absolute; left:0; top:0; bottom:0;
+    width:34%;
+    background: var(--terracotta-deep);
+  }
+  .menu__pause{
+    background:transparent;
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:8px 14px;
+    font-size:10px; font-weight:700; letter-spacing:.1em;
+    color: var(--charcoal-soft);
+    transition: border-color .2s ease, color .2s ease;
+  }
+  .menu__pause:hover{ border-color: var(--terracotta-deep); color: var(--terracotta-deep); }
+
+  /* ---- reduced-motion fallback: static, manually scrollable ---- */
+  .menu--static .menu__viewport{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    scroll-snap-type: x proximity;
+    cursor:auto;
+  }
+  .menu--static .menu__track{ transform:none !important; }
+  .menu--static .menu-card{ scroll-snap-align:start; }
+  .menu--static .menu__hint{ display:none; }
+
+  /* scroll-reveal */
+  .reveal{
+    opacity:0; transform:translateY(26px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .reveal.in-view{ opacity:1; transform:translateY(0); }
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ transition:none; opacity:1; transform:none; }
+  }
+
+  /* ==================================================== */
+  /* SECTION 04 — THE GALLERY                              */
+  /* Same global background, same .site-container master   */
+  /* left edge, same colors/typography as Hero, Story and   */
+  /* Menu. Manual, drag/swipe/arrow driven horizontal       */
+  /* viewer — deliberately NOT an auto-marquee (that motion */
+  /* belongs to the Menu only).                              */
+  /* ==================================================== */
+  .gallery{
+    position:relative;
+    background: transparent;
+    overflow:hidden;
+    isolation:isolate;
+  }
+  /* Legibility veil only — identical technique to .hero__scrim /
+     .story__scrim / .menu__scrim, reused rather than reinvented.
+     No new background image, no solid fill. */
+  .gallery__scrim{
+    position:absolute; inset:0; z-index:0;
+    pointer-events:none;
+    background:
+      linear-gradient(180deg, rgba(36,30,26,0.20) 0%, rgba(36,30,26,0) 16%, rgba(36,30,26,0) 84%, rgba(36,30,26,0.20) 100%),
+      linear-gradient(90deg, rgba(244,236,221,0.42) 0%, rgba(244,236,221,0.14) 46%, rgba(244,236,221,0) 68%);
+  }
+  @media (min-width:1024px){
+    .gallery__scrim{
+      background:
+        linear-gradient(180deg, rgba(36,30,26,0.16) 0%, rgba(36,30,26,0) 14%, rgba(36,30,26,0) 86%, rgba(36,30,26,0.16) 100%),
+        linear-gradient(90deg, rgba(244,236,221,0.46) 0%, rgba(244,236,221,0.16) 42%, rgba(244,236,221,0) 62%);
+    }
+  }
+
+  /* .gallery__inner IS the global .site-container (shared class on
+     the same element, exactly like .story__inner / .menu__inner) —
+     it only adds vertical rhythm, never a new left edge. */
+  .gallery__inner{
+    position:relative; z-index:1;
+    padding-top: calc(var(--section-space) / 2);
+    padding-bottom: var(--section-space);
+    display:flex; flex-direction:column;
+    gap: 36px;
+  }
+  @media (min-width:768px){
+    .gallery__inner{ gap:44px; }
+  }
+
+  .gallery__head{
+    display:flex; flex-wrap:wrap;
+    align-items:flex-end; justify-content:space-between;
+    gap:24px 40px;
+  }
+  .gallery__head-text{ max-width:640px; }
+
+  .gallery__label{
+    display:flex; align-items:baseline; gap:14px;
+    margin:0 0 22px;
+  }
+  .gallery__label .num{
+    font-family:'Fraunces', serif;
+    font-size:15px; font-weight:500;
+    color: var(--terracotta-deep);
+  }
+  .gallery__label .txt{
+    font-size:11.5px; font-weight:700; letter-spacing:.18em;
+    color: var(--charcoal-soft);
+  }
+  .gallery__label::after{
+    content:'';
+    flex:1; height:1px; background:var(--line);
+    align-self:center;
+  }
+
+  .gallery__headline{
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    font-size: clamp(2.1rem, 6vw, 3.1rem);
+    line-height:1.14;
+    letter-spacing:-.01em;
+    margin:0 0 18px;
+  }
+  .gallery__headline .warm{ color:var(--terracotta-deep); }
+  .gallery__headline .dark{ color:var(--charcoal); }
+
+  .gallery__copy{
+    font-size:15.5px; line-height:1.65;
+    color: var(--charcoal-soft);
+    max-width:46ch;
+    margin:0;
+  }
+  @media (min-width:768px){
+    .gallery__copy{ font-size:16.5px; }
+  }
+
+  /* ---- understated controls: arrows + counter ---- */
+  .gallery__controls{
+    display:flex; align-items:center; gap:14px;
+    flex:0 0 auto;
+  }
+  .gallery__arrow{
+    width:44px; height:44px;
+    display:flex; align-items:center; justify-content:center;
+    background: rgba(244,236,221,0.92);
+    border: 1.5px solid var(--charcoal);
+    border-radius:2px;
+    color: var(--terracotta-deep);
+    font-size:17px;
+    font-weight:600;
+    box-shadow: 0 2px 10px rgba(36,30,26,.16);
+    transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease;
+  }
+  .gallery__arrow:hover{ background: var(--charcoal); border-color: var(--charcoal); color: var(--cream); }
+  .gallery__arrow:active{ transform: scale(.94); }
+  .gallery__arrow:disabled{ opacity:.35; pointer-events:none; box-shadow:none; }
+
+  .gallery__counter{
+    font-size:11.5px; font-weight:700; letter-spacing:.08em;
+    color: var(--charcoal-soft);
+    white-space:nowrap;
+  }
+  .gallery__counter .current{ color: var(--terracotta-deep); }
+
+  /* ---- viewport / track ---- */
+  .gallery__marquee{ width:100%; }
+
+  .gallery__viewport{
+    position:relative;
+    width:100%;
+    overflow:hidden;
+    touch-action: pan-y;
+    cursor: grab;
+  }
+  .gallery__viewport:active{ cursor: grabbing; }
+
+  .gallery__track{
+    display:flex;
+    align-items:stretch;
+    gap:16px;
+    list-style:none;
+    margin:0; padding:0;
+    will-change: transform;
+    transform: translate3d(0,0,0);
+    transition: transform .5s cubic-bezier(.22,.61,.36,1);
+  }
+  .gallery__track.is-dragging{ transition:none; }
+  @media (min-width:640px){ .gallery__track{ gap:20px; } }
+  @media (min-width:1024px){ .gallery__track{ gap:24px; } }
+
+  .gallery__item{
+    position:relative;
+    flex:0 0 auto;
+    border-radius:3px;
+    overflow:hidden;
+    background: linear-gradient(155deg, #E7D9BC, #D8C39C);
+  }
+  .gallery__item img{
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+    user-select:none;
+    -webkit-user-drag:none;
+  }
+
+  /* Mobile-first: ONE large image + a small peek of the next —
+     signals "there is more to explore" without a full second card. */
+  .gallery__item{
+    width: 82vw;
+    aspect-ratio: 4 / 5;
+  }
+  @media (max-width:359px){
+    .gallery__item{ width:78vw; }
+  }
+
+  /* Tablet / desktop: several images visible in the same track */
+  @media (min-width:768px){
+    .gallery__item{ width: 44vw; aspect-ratio: 4 / 5; }
+  }
+  @media (min-width:1024px){
+    .gallery__item{ width: 27vw; max-width:320px; aspect-ratio: 3 / 4; }
+  }
+  @media (min-width:1440px){
+    .gallery__item{ width: 20vw; max-width:290px; }
+  }
+
+  /* placeholder state — mirrors .carousel__slide.no-image, shown
+     only if a given assets/gN file fails to load */
+  .gallery__item.gallery__item--empty img{ display:none; }
+  .gallery__item.gallery__item--empty::before{
+    content: attr(data-fallback-label);
+    position:absolute; top:16px; left:18px; z-index:1;
+    font-size:10.5px; font-weight:700; letter-spacing:.12em;
+    color: rgba(36,30,26,.45);
+  }
+  .gallery__item.gallery__item--empty::after{
+    content:'';
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(135deg, rgba(36,30,26,.05) 0 2px, transparent 2px 14px);
+  }
+
+  .gallery__footer{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:20px; flex-wrap:wrap;
+  }
+
+  .gallery__rule{
+    display:none;
+    align-items:center; gap:10px;
+    font-size:10.5px; font-weight:700; letter-spacing:.1em;
+    color: var(--charcoal-soft);
+  }
+  @media (min-width:640px){ .gallery__rule{ display:flex; } }
+  .gallery__rule-bar{
+    width:120px; height:1px;
+    background: var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  .gallery__rule-bar span{
+    position:absolute; left:0; top:0; bottom:0;
+    background: var(--terracotta-deep);
+    transition: width .4s ease;
+    width: 9.09%;
+  }
+
+  .gallery__hint{
+    display:block;
+    font-size:10px; font-weight:700; letter-spacing:.14em;
+    color: var(--charcoal-soft);
+    opacity:.6;
+  }
+  @media (min-width:1024px){ .gallery__hint{ display:none; } }
+
+  @media (prefers-reduced-motion: reduce){
+    .gallery__track{ transition:none; }
+  }
+</style>
+</head>
+<body class="intro-active">
+
+<!-- LOADING INTRO -->
+<div id="intro" aria-hidden="true">
+  <img src="assets/logo.webp" alt="" />
+</div>
+
+<!-- ================================
+     GLOBAL FIXED BACKGROUND
+     One persistent layer behind the entire homepage.
+     ================================ -->
+<div class="site-background" aria-hidden="true">
+  <div class="site-bg"></div>
+</div>
+
+<main class="site-content">
+
+<!-- ================================
+     SECTION 01 — HERO
+     ================================ -->
+<header class="hero">
+  <div class="hero__scrim"></div>
+
+  <nav class="nav" aria-label="Primary">
+    <div class="nav__row site-container">
+      <a href="#" class="brand" aria-label="Dallaspuram home">
+        <img src="assets/logo.webp" alt="Dallaspuram — Telugu Kitchen & Bar" width="58" height="58">
+      </a>
+
+      <ul class="nav__links">
+        <li><a href="#menu">MENU</a></li>
+        <li><a href="#story">OUR STORY</a></li>
+        <li><a href="#experience">EXPERIENCE</a></li>
+        <li><a href="#gallery">GALLERY</a></li>
+        <li><a href="#visit">VISIT US</a></li>
+      </ul>
+
+      <div class="nav__right">
+        <a href="#reserve" class="nav__cta reserve">RESERVE A TABLE</a>
+        <a href="#order" class="nav__cta order">ORDER ONLINE</a>
+        <a href="#order" class="nav__cta order mobile-order">ORDER</a>
+        <button class="hamburger" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel">
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="hero__content">
+    <div class="site-container">
+      <div class="hero__text">
+        <p class="eyebrow">TELUGU KITCHEN &amp; BAR</p>
+
+      <h1 class="headline">
+        <span class="warm">Telugu flavours,</span><br>
+        <span class="dark">served with soul.</span>
+      </h1>
+
+      <p class="supporting">
+        A contemporary dining experience rooted in Telugu tradition, bringing people together over great food and memorable moments.
+      </p>
+
+      <div class="cta-row">
+        <a href="#order" class="btn primary">ORDER ONLINE <span class="arrow">→</span></a>
+        <a href="#reserve" class="btn secondary">RESERVE A TABLE <span class="arrow">→</span></a>
+      </div>
+
+      <div class="info-row">
+        <div class="info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>
+          <div>
+            <p class="label">KITCHEN OPEN</p>
+            <p class="value">12:00 PM – 11:30 PM</p>
+          </div>
+        </div>
+        <div class="info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h9l3 5-7.5 13L3 8z"/><path d="M9.5 3 12 8l2.5-5"/><path d="M3 8h18"/></svg>
+          <div>
+            <p class="label">BAR OPEN</p>
+            <p class="value">12:00 PM – 12:00 AM</p>
+          </div>
+        </div>
+        <div class="info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-6.3-7-11.5A7 7 0 0 1 19 9.5C19 14.7 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg>
+          <div>
+            <p class="label">OUR LOCATION</p>
+            <p class="value">Dallaspuram, Hyderabad</p>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-cue site-container">
+    <span>SCROLL TO EXPLORE</span>
+    <div class="line"></div>
+  </div>
+</header>
+
+<!-- ================================
+     SECTION 02 — DALLASPURAM STORY
+     ================================ -->
+<section id="story" class="story">
+  <div class="story__scrim"></div>
+  <div class="story__inner site-container">
+
+    <div class="story__content">
+      <p class="story__label reveal">
+        <span class="num">02</span>
+        <span class="txt">THE DALLASPURAM STORY</span>
+      </p>
+
+      <h2 class="story__headline reveal">
+        <span class="warm">Rooted in tradition.</span><br>
+        <span class="dark">Made for today.</span>
+      </h2>
+
+      <p class="story__copy reveal">
+        Dallaspuram brings the warmth, bold flavours and spirited hospitality of Telugu kitchens to a space made for gathering, celebrating and creating memories.
+      </p>
+
+      <a href="#story" class="story__cta reveal">OUR STORY <span class="arrow">→</span></a>
+
+      <div class="pillars reveal">
+        <div class="pillar">
+          <p class="pillar__head"><span class="pillar__num">01</span><h3>ROOTS</h3></p>
+          <p>Deeply inspired by the rich culinary heritage of Andhra and Telangana.</p>
+        </div>
+        <div class="pillar">
+          <p class="pillar__head"><span class="pillar__num">02</span><h3>FLAVOURS</h3></p>
+          <p>Bold, authentic and unmistakably Telugu.</p>
+        </div>
+        <div class="pillar">
+          <p class="pillar__head"><span class="pillar__num">03</span><h3>HOSPITALITY</h3></p>
+          <p>A space for families, friends and new beginnings.</p>
+        </div>
+        <div class="pillar">
+          <p class="pillar__head"><span class="pillar__num">04</span><h3>SPIRIT</h3></p>
+          <p>Great food, crafted drinks and memorable times.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREMIUM EDITORIAL CAROUSEL — replaces the old overlapping card stack -->
+    <div class="story__carousel reveal" id="storyCarousel">
+      <div class="carousel__viewport" id="carouselViewport">
+        <figure class="carousel__slide is-active" data-placeholder-label="ROOTS">
+          <img src="assets/img1.png" alt="Roots — a legacy on every plate" loading="lazy"
+               onerror="this.closest('.carousel__slide').classList.add('no-image')">
+        </figure>
+        <figure class="carousel__slide" data-placeholder-label="FLAVOURS">
+          <img src="assets/img2.png" alt="Flavours — tradition in every bite" loading="lazy"
+               onerror="this.closest('.carousel__slide').classList.add('no-image')">
+        </figure>
+        <figure class="carousel__slide" data-placeholder-label="PEOPLE">
+          <img src="assets/img3.png" alt="People — good food brings people closer" loading="lazy"
+               onerror="this.closest('.carousel__slide').classList.add('no-image')">
+        </figure>
+      </div>
+
+      <div class="carousel__meta">
+        <div class="carousel__info" aria-live="polite">
+          <p style="margin:0;">
+            <span class="num" id="carouselNum">01</span><span class="title" id="carouselTitle">ROOTS</span>
+          </p>
+          <p class="desc" id="carouselDesc">A legacy on every plate.</p>
+        </div>
+        <div class="carousel__controls">
+          <button class="carousel__arrow" id="carouselPrev" aria-label="Previous slide">←</button>
+          <span class="carousel__counter"><span class="current" id="carouselCurrent">01</span> / <span id="carouselTotal">03</span></span>
+          <button class="carousel__arrow" id="carouselNext" aria-label="Next slide">→</button>
+        </div>
+      </div>
+
+      <span class="carousel__hint">SWIPE TO EXPLORE</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================================
+     SECTION 03 — THE MENU
+     ================================ -->
+<section id="menu" class="menu">
+  <div class="menu__scrim"></div>
+  <div class="menu__inner site-container">
+
+    <div class="menu__head">
+      <p class="menu__label reveal">
+        <span class="num">03</span>
+        <span class="txt">THE MENU</span>
+      </p>
+
+      <h2 class="menu__headline reveal">
+        <span class="warm">Bold flavours,</span><br>
+        <span class="dark">deeply Telugu.</span>
+      </h2>
+
+      <p class="menu__copy reveal">
+        From fiery Andhra favourites to soulful Telugu classics, discover flavours made for sharing, celebrating, and coming back for.
+      </p>
+
+      <p class="menu__hint reveal">DRAG TO EXPLORE <span class="dot">·</span> ORDER ANY DISH DIRECTLY <span class="arrow">→</span></p>
+    </div>
+
+    <div class="menu__marquee reveal" id="menuMarquee">
+      <div class="menu__viewport" id="menuViewport">
+        <ul class="menu__track" id="menuTrack">
+        <li class="menu-card">
+          <div class="menu-card__top">
+            <span class="menu-card__num">01</span>
+            <span class="menu-card__badge">SIGNATURE</span>
+          </div>
+          <h3 class="menu-card__title">GONGURA MUTTON</h3>
+          <p class="menu-card__desc">Tender mutton slow-cooked with tangy gongura and bold Telugu spices.</p>
+          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+        </li>
+        <li class="menu-card">
+          <div class="menu-card__top">
+            <span class="menu-card__num">02</span>
+          </div>
+          <h3 class="menu-card__title">NATU KODI</h3>
+          <p class="menu-card__desc">Country chicken simmered in deeply spiced masala with unmistakable Andhra character.</p>
+          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+        </li>
+        <li class="menu-card">
+          <div class="menu-card__top">
+            <span class="menu-card__num">03</span>
+          </div>
+          <h3 class="menu-card__title">ROYYALA IGURU</h3>
+          <p class="menu-card__desc">Juicy prawns tossed in a rich, fiery masala inspired by coastal Telugu kitchens.</p>
+          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+        </li>
+        <li class="menu-card">
+          <div class="menu-card__top">
+            <span class="menu-card__num">04</span>
+          </div>
+          <h3 class="menu-card__title">GUTTI VANKAYA</h3>
+          <p class="menu-card__desc">Baby brinjals filled with a fragrant spice blend and cooked until rich and tender.</p>
+          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+        </li>
+        <li class="menu-card">
+          <div class="menu-card__top">
+            <span class="menu-card__num">05</span>
+            <span class="menu-card__badge">BEST SELLER</span>
+          </div>
+          <h3 class="menu-card__title">ANDHRA CHICKEN</h3>
+          <p class="menu-card__desc">Succulent chicken layered with roasted spices, curry leaves and a fiery Andhra finish.</p>
+          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+        </li>
+        <li class="menu-card">
+          <div class="menu-card__top">
+            <span class="menu-card__num">06</span>
+          </div>
+          <h3 class="menu-card__title">MIRCHI BAJJI</h3>
+          <p class="menu-card__desc">Green chillies coated in crisp golden batter with classic Telugu accompaniments.</p>
+          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+        </li>
+        <li class="menu-card">
+          <div class="menu-card__top">
+            <span class="menu-card__num">07</span>
+          </div>
+          <h3 class="menu-card__title">PEPPER CHICKEN</h3>
+          <p class="menu-card__desc">Tender chicken finished with cracked pepper, curry leaves and aromatic spices.</p>
+          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+        </li>
+        <li class="menu-card">
+          <div class="menu-card__top">
+            <span class="menu-card__num">08</span>
+          </div>
+          <h3 class="menu-card__title">KODI VEPUDU</h3>
+          <p class="menu-card__desc">Andhra-style chicken fry tossed with roasted spices, chillies and curry leaves.</p>
+          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+        </li>
+        <li class="menu-card">
+          <div class="menu-card__top">
+            <span class="menu-card__num">09</span>
+          </div>
+          <h3 class="menu-card__title">ULAVA CHARU</h3>
+          <p class="menu-card__desc">A slow-cooked horse gram broth with earthy depth and a warming, tangy finish.</p>
+          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+        </li>
+        <li class="menu-card">
+          <div class="menu-card__top">
+            <span class="menu-card__num">10</span>
+          </div>
+          <h3 class="menu-card__title">PULIHORA</h3>
+          <p class="menu-card__desc">Fragrant rice with tamarind, toasted spices, peanuts and curry leaves.</p>
+          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+        </li>
+        <li class="menu-card">
+          <div class="menu-card__top">
+            <span class="menu-card__num">11</span>
+          </div>
+          <h3 class="menu-card__title">RAGI SANGATI</h3>
+          <p class="menu-card__desc">Traditional ragi dumplings paired with rich, comforting Telugu-style curries.</p>
+          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+        </li>
+        <li class="menu-card">
+          <div class="menu-card__top">
+            <span class="menu-card__num">12</span>
+            <span class="menu-card__badge">HOUSE FAVOURITE</span>
+          </div>
+          <h3 class="menu-card__title">POOTHAREKULU</h3>
+          <p class="menu-card__desc">Delicate rice-paper layers wrapped around a rich, melt-in-the-mouth sweet filling.</p>
+          <span class="menu-card__cta">ORDER DIRECTLY <span class="arrow">→</span></span>
+        </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="menu__footer">
+      <div class="menu__progress" aria-hidden="true">
+        <span>01</span>
+        <span class="menu__progress-bar"></span>
+        <span>12</span>
+      </div>
+      <button class="menu__pause" id="menuPauseBtn" type="button" aria-pressed="false">PAUSE</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================================
+     SECTION 04 — THE GALLERY
+     ================================ -->
+<section id="gallery" class="gallery">
+  <div class="gallery__scrim"></div>
+  <div class="gallery__inner site-container">
+
+    <div class="gallery__head">
+      <div class="gallery__head-text">
+        <p class="gallery__label reveal">
+          <span class="num">04</span>
+          <span class="txt">THE GALLERY</span>
+        </p>
+
+        <h2 class="gallery__headline reveal">
+          <span class="warm">A glimpse into</span><br>
+          <span class="dark">Dallaspuram.</span>
+        </h2>
+
+        <p class="gallery__copy reveal">
+          Explore the flavours, spaces and moments that bring Dallaspuram to life.
+        </p>
+      </div>
+
+      <div class="gallery__controls reveal">
+        <button class="gallery__arrow" id="galleryPrev" type="button" aria-label="Previous gallery image">←</button>
+        <span class="gallery__counter"><span class="current" id="galleryCurrent">01</span> / <span id="galleryTotal">11</span></span>
+        <button class="gallery__arrow" id="galleryNext" type="button" aria-label="Next gallery image">→</button>
+      </div>
+    </div>
+
+    <div class="gallery__marquee reveal">
+      <div class="gallery__viewport" id="galleryViewport">
+        <ul class="gallery__track" id="galleryTrack">
+          <li class="gallery__item" data-fallback-label="G1">
+            <img src="assets/g1.png" alt="Chef plating a signature dish in the Dallaspuram kitchen" loading="lazy" draggable="false"
+                 onerror="this.closest('.gallery__item').classList.add('gallery__item--empty')">
+          </li>
+          <li class="gallery__item" data-fallback-label="G2">
+            <img src="assets/g2.png" alt="Close-up of a bold Telugu curry finished with curry leaves" loading="lazy" draggable="false"
+                 onerror="this.closest('.gallery__item').classList.add('gallery__item--empty')">
+          </li>
+          <li class="gallery__item" data-fallback-label="G3">
+            <img src="assets/g3.png" alt="Warm, wood-toned dining room at Dallaspuram" loading="lazy" draggable="false"
+                 onerror="this.closest('.gallery__item').classList.add('gallery__item--empty')">
+          </li>
+          <li class="gallery__item" data-fallback-label="G4">
+            <img src="assets/g4.png" alt="Bartender crafting a cocktail at the Dallaspuram bar" loading="lazy" draggable="false"
+                 onerror="this.closest('.gallery__item').classList.add('gallery__item--empty')">
+          </li>
+          <li class="gallery__item" data-fallback-label="G5">
+            <img src="assets/g5.png" alt="Friends sharing a meal together at Dallaspuram" loading="lazy" draggable="false"
+                 onerror="this.closest('.gallery__item').classList.add('gallery__item--empty')">
+          </li>
+          <li class="gallery__item" data-fallback-label="G6">
+            <img src="assets/g6.png" alt="Traditional Telugu thali spread across a brass plate" loading="lazy" draggable="false"
+                 onerror="this.closest('.gallery__item').classList.add('gallery__item--empty')">
+          </li>
+          <li class="gallery__item" data-fallback-label="G7">
+            <img src="assets/g7.png" alt="Spices and ingredients laid out in the Dallaspuram kitchen" loading="lazy" draggable="false"
+                 onerror="this.closest('.gallery__item').classList.add('gallery__item--empty')">
+          </li>
+          <li class="gallery__item" data-fallback-label="G8">
+            <img src="assets/g8.png" alt="Guests raising a toast at the Dallaspuram bar" loading="lazy" draggable="false"
+                 onerror="this.closest('.gallery__item').classList.add('gallery__item--empty')">
+          </li>
+          <li class="gallery__item" data-fallback-label="G9">
+            <img src="assets/g9.png" alt="Hands preparing traditional Telugu sweets" loading="lazy" draggable="false"
+                 onerror="this.closest('.gallery__item').classList.add('gallery__item--empty')">
+          </li>
+          <li class="gallery__item" data-fallback-label="G10">
+            <img src="assets/g10.png" alt="Candlelit table setting in the evening at Dallaspuram" loading="lazy" draggable="false"
+                 onerror="this.closest('.gallery__item').classList.add('gallery__item--empty')">
+          </li>
+          <li class="gallery__item" data-fallback-label="G11">
+            <img src="assets/g11.png" alt="Exterior view of the Dallaspuram entrance at dusk" loading="lazy" draggable="false"
+                 onerror="this.closest('.gallery__item').classList.add('gallery__item--empty')">
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="gallery__footer reveal">
+      <div class="gallery__rule" aria-hidden="true">
+        <span>01</span>
+        <span class="gallery__rule-bar"><span id="galleryRuleFill"></span></span>
+        <span id="galleryRuleTotal">11</span>
+      </div>
+      <span class="gallery__hint">SWIPE TO EXPLORE</span>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<!-- MOBILE / OVERLAY MENU -->
+<div class="menu-panel" id="menuPanel" role="dialog" aria-modal="true" aria-label="Site menu">
+  <button class="menu-panel__close" id="menuClose" aria-label="Close menu">✕</button>
+  <ul>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#story">Our Story</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#visit">Visit Us</a></li>
+  </ul>
+  <div class="menu-panel__ctas">
+    <a href="#order" class="order">ORDER ONLINE</a>
+    <a href="#reserve" class="reserve">RESERVE A TABLE</a>
+  </div>
+</div>
+
+<script>
+  // ---- Loading intro ----
+  (function(){
+    var intro = document.getElementById('intro');
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var seen = sessionStorage.getItem('dp_intro_seen');
+
+    function reveal(){
+      document.body.classList.remove('intro-active');
+      intro.classList.add('hide');
+      sessionStorage.setItem('dp_intro_seen', '1');
+    }
+
+    if (seen) {
+      intro.classList.add('hide');
+      document.body.classList.remove('intro-active');
+    } else if (reduced) {
+      setTimeout(reveal, 400);
+    } else {
+      window.addEventListener('load', function(){
+        setTimeout(reveal, 2200);
+      });
+      // safety fallback in case load event is delayed
+      setTimeout(reveal, 4000);
+    }
+  })();
+
+  // ---- Mobile menu ----
+  (function(){
+    var toggle = document.getElementById('menuToggle');
+    var panel = document.getElementById('menuPanel');
+    var close = document.getElementById('menuClose');
+
+    function open(){
+      panel.classList.add('open');
+      toggle.setAttribute('aria-expanded','true');
+      document.body.style.overflow = 'hidden';
+      close.focus();
+    }
+    function shut(){
+      panel.classList.remove('open');
+      toggle.setAttribute('aria-expanded','false');
+      document.body.style.overflow = '';
+      toggle.focus();
+    }
+    toggle.addEventListener('click', function(){
+      var expanded = toggle.getAttribute('aria-expanded') === 'true';
+      expanded ? shut() : open();
+    });
+    close.addEventListener('click', shut);
+    panel.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', shut);
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && panel.classList.contains('open')) shut();
+    });
+  })();
+
+  // ---- Section 02: scroll reveal ----
+  (function(){
+    var targets = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window) || !targets.length){
+      targets.forEach(function(el){ el.classList.add('in-view'); });
+      return;
+    }
+    var observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){
+          entry.target.classList.add('in-view');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+
+    targets.forEach(function(el, i){
+      el.style.transitionDelay = (i % 6) * 70 + 'ms';
+      observer.observe(el);
+    });
+  })();
+
+  // ---- Section 02: premium editorial carousel ----
+  (function(){
+    var root = document.getElementById('storyCarousel');
+    if (!root) return;
+
+    var slideData = [
+      { num:'01', title:'ROOTS',     desc:'A legacy on every plate.' },
+      { num:'02', title:'FLAVOURS',  desc:'Tradition in every bite.' },
+      { num:'03', title:'PEOPLE',    desc:'Good food brings people closer.' }
+    ];
+
+    var viewport = document.getElementById('carouselViewport');
+    var slides = viewport.querySelectorAll('.carousel__slide');
+    var prevBtn = document.getElementById('carouselPrev');
+    var nextBtn = document.getElementById('carouselNext');
+    var numEl = document.getElementById('carouselNum');
+    var titleEl = document.getElementById('carouselTitle');
+    var descEl = document.getElementById('carouselDesc');
+    var currentEl = document.getElementById('carouselCurrent');
+
+    var index = 0;
+    var total = slides.length;
+
+    function render(){
+      slides.forEach(function(slide, i){
+        slide.classList.toggle('is-active', i === index);
+        slide.classList.toggle('is-prev', i === (index - 1 + total) % total);
+      });
+      var d = slideData[index];
+      numEl.textContent = d.num;
+      titleEl.textContent = d.title;
+      descEl.textContent = d.desc;
+      currentEl.textContent = d.num;
+    }
+
+    function go(step){
+      index = (index + step + total) % total;
+      render();
+    }
+
+    prevBtn.addEventListener('click', function(){ go(-1); });
+    nextBtn.addEventListener('click', function(){ go(1); });
+
+    // keyboard support
+    root.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowLeft') go(-1);
+      if (e.key === 'ArrowRight') go(1);
+    });
+
+    // touch / swipe support
+    var startX = null;
+    var startY = null;
+    var SWIPE_THRESHOLD = 40;
+
+    viewport.addEventListener('touchstart', function(e){
+      var t = e.changedTouches[0];
+      startX = t.clientX; startY = t.clientY;
+    }, { passive:true });
+
+    viewport.addEventListener('touchend', function(e){
+      if (startX === null) return;
+      var t = e.changedTouches[0];
+      var dx = t.clientX - startX;
+      var dy = t.clientY - startY;
+      if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)){
+        dx < 0 ? go(1) : go(-1);
+      }
+      startX = null; startY = null;
+    }, { passive:true });
+
+    render();
+  })();
+
+  // ---- Section 03: automatic menu marquee ----
+  (function(){
+    var section = document.querySelector('.menu');
+    if (!section) return;
+
+    var viewport = document.getElementById('menuViewport');
+    var track = document.getElementById('menuTrack');
+    var pauseBtn = document.getElementById('menuPauseBtn');
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduced){
+      // static, manually scrollable row — no continuous animation
+      section.classList.add('menu--static');
+      return;
+    }
+
+    // duplicate the track once so the loop can reset invisibly
+    var originalCount = track.children.length;
+    track.insertAdjacentHTML('beforeend', track.innerHTML);
+    var cards = track.querySelectorAll('.menu-card');
+    cards.forEach(function(card, i){
+      if (i >= originalCount) card.setAttribute('aria-hidden', 'true');
+    });
+
+    var offset = 0;
+    var singleWidth = 0;
+    function measure(){ singleWidth = track.scrollWidth / 2; }
+    measure();
+    window.addEventListener('resize', measure);
+
+    var SPEED = 34; // px/second — calm, editorial pace
+    var isPaused = false;
+    var isDragging = false;
+    var manuallyPaused = false;
+    var resumeTimer = null;
+    var lastTime = null;
+    var dragStartX = 0;
+    var dragStartOffset = 0;
+
+    function wrap(){
+      if (singleWidth <= 0) return;
+      while (offset <= -singleWidth) offset += singleWidth;
+      while (offset > 0) offset -= singleWidth;
+    }
+    function render(){
+      track.style.transform = 'translate3d(' + offset + 'px,0,0)';
+    }
+    function pauseAuto(){
+      isPaused = true;
+      if (resumeTimer) clearTimeout(resumeTimer);
+    }
+    function scheduleResume(delay){
+      if (resumeTimer) clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(function(){
+        if (!manuallyPaused){ isPaused = false; lastTime = null; }
+      }, delay);
+    }
+
+    function frame(now){
+      if (lastTime == null) lastTime = now;
+      var dt = (now - lastTime) / 1000;
+      lastTime = now;
+      if (!isPaused && !isDragging){
+        offset -= SPEED * dt;
+        wrap();
+        render();
+      }
+      requestAnimationFrame(frame);
+    }
+
+    // hover pause (desktop)
+    viewport.addEventListener('mouseenter', function(){ if (!manuallyPaused) pauseAuto(); });
+    viewport.addEventListener('mouseleave', function(){ if (!manuallyPaused) scheduleResume(250); });
+
+    // unified pointer drag (mouse + touch + pen)
+    viewport.addEventListener('pointerdown', function(e){
+      isDragging = true;
+      pauseAuto();
+      dragStartX = e.clientX;
+      dragStartOffset = offset;
+      if (viewport.setPointerCapture){
+        try { viewport.setPointerCapture(e.pointerId); } catch(err){}
+      }
+    });
+    viewport.addEventListener('pointermove', function(e){
+      if (!isDragging) return;
+      offset = dragStartOffset + (e.clientX - dragStartX);
+      wrap();
+      render();
+    });
+    function endDrag(){
+      if (!isDragging) return;
+      isDragging = false;
+      scheduleResume(900);
+    }
+    viewport.addEventListener('pointerup', endDrag);
+    viewport.addEventListener('pointercancel', endDrag);
+    viewport.addEventListener('pointerleave', function(){ if (isDragging) endDrag(); });
+
+    // optional pause/play control
+    pauseBtn.addEventListener('click', function(){
+      manuallyPaused = !manuallyPaused;
+      pauseBtn.setAttribute('aria-pressed', manuallyPaused ? 'true' : 'false');
+      pauseBtn.textContent = manuallyPaused ? 'PLAY' : 'PAUSE';
+      if (manuallyPaused){ pauseAuto(); } else { scheduleResume(0); }
+    });
+
+    // subtle emphasis on whichever card sits nearest the viewport centre
+    setInterval(function(){
+      var vRect = viewport.getBoundingClientRect();
+      var centerX = vRect.left + vRect.width / 2;
+      var closest = null, closestDist = Infinity;
+      cards.forEach(function(card){
+        var r = card.getBoundingClientRect();
+        var d = Math.abs((r.left + r.width / 2) - centerX);
+        if (d < closestDist){ closestDist = d; closest = card; }
+      });
+      cards.forEach(function(c){ c.classList.remove('is-focus'); });
+      if (closest) closest.classList.add('is-focus');
+    }, 220);
+
+    requestAnimationFrame(frame);
+  })();
+
+  // ---- Section 04: gallery (manual — drag / swipe / arrow driven) ----
+  (function(){
+    var section = document.querySelector('.gallery');
+    if (!section) return;
+
+    var viewport = document.getElementById('galleryViewport');
+    var track = document.getElementById('galleryTrack');
+    var items = track.querySelectorAll('.gallery__item');
+    var prevBtn = document.getElementById('galleryPrev');
+    var nextBtn = document.getElementById('galleryNext');
+    var currentEl = document.getElementById('galleryCurrent');
+    var totalEl = document.getElementById('galleryTotal');
+    var ruleFill = document.getElementById('galleryRuleFill');
+    var ruleTotal = document.getElementById('galleryRuleTotal');
+
+    var total = items.length;
+    var index = 0;
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function pad(n){ return n < 10 ? '0' + n : String(n); }
+
+    if (totalEl) totalEl.textContent = pad(total);
+    if (ruleTotal) ruleTotal.textContent = pad(total);
+
+    function itemStep(){
+      if (total < 2) return 0;
+      var r0 = items[0].getBoundingClientRect();
+      var r1 = items[1].getBoundingClientRect();
+      return r1.left - r0.left;
+    }
+
+    function maxOffset(){
+      var vw = viewport.getBoundingClientRect().width;
+      var trackWidth = track.scrollWidth;
+      return Math.max(0, trackWidth - vw);
+    }
+
+    function offsetForIndex(i){
+      return Math.min(i * itemStep(), maxOffset());
+    }
+
+    function paint(){
+      currentEl.textContent = pad(index + 1);
+      if (ruleFill) ruleFill.style.width = (((index + 1) / total) * 100) + '%';
+    }
+
+    function render(animate){
+      if (!animate || reduced) track.classList.add('is-dragging');
+      track.style.transform = 'translate3d(-' + offsetForIndex(index) + 'px,0,0)';
+      paint();
+      if (!animate || reduced){
+        void track.offsetHeight; // force reflow before re-enabling transition
+        track.classList.remove('is-dragging');
+      }
+    }
+
+    // Loops: 01 → 02 → ... → 11 → 01, and 11 → 10 → ... → 01 → 11.
+    // A wrap (last→first or first→last) snaps instantly rather than
+    // animating a long slide across the whole track.
+    function go(step){
+      var next = index + step;
+      var wrapped = next < 0 || next >= total;
+      index = (next + total) % total;
+      render(!wrapped);
+    }
+
+    prevBtn.addEventListener('click', function(){ go(-1); });
+    nextBtn.addEventListener('click', function(){ go(1); });
+
+    // keyboard: only when focus is inside the Gallery section
+    section.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowLeft'){ go(-1); }
+      if (e.key === 'ArrowRight'){ go(1); }
+    });
+
+    var resizeTimer = null;
+    window.addEventListener('resize', function(){
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function(){ render(false); }, 120);
+    });
+
+    // unified pointer drag (mouse + touch + pen) — no auto-advance,
+    // the Gallery only moves in response to the visitor.
+    var isDragging = false;
+    var dragStartX = 0;
+    var dragStartOffset = 0;
+
+    viewport.addEventListener('pointerdown', function(e){
+      isDragging = true;
+      track.classList.add('is-dragging');
+      dragStartX = e.clientX;
+      dragStartOffset = offsetForIndex(index);
+      if (viewport.setPointerCapture){
+        try { viewport.setPointerCapture(e.pointerId); } catch(err){}
+      }
+    });
+
+    viewport.addEventListener('pointermove', function(e){
+      if (!isDragging) return;
+      var dx = e.clientX - dragStartX;
+      var live = Math.max(0, Math.min(maxOffset(), dragStartOffset - dx));
+      track.style.transform = 'translate3d(-' + live + 'px,0,0)';
+    });
+
+    function endDrag(e){
+      if (!isDragging) return;
+      isDragging = false;
+      track.classList.remove('is-dragging');
+      var endX = (e && typeof e.clientX === 'number') ? e.clientX : dragStartX;
+      var dx = endX - dragStartX;
+      var THRESHOLD = 40;
+      if (dx <= -THRESHOLD) go(1);
+      else if (dx >= THRESHOLD) go(-1);
+      else render(true);
+    }
+    viewport.addEventListener('pointerup', endDrag);
+    viewport.addEventListener('pointercancel', endDrag);
+    viewport.addEventListener('pointerleave', function(e){ if (isDragging) endDrag(e); });
+
+    render(false);
+  })();
+</script>
+</body>
+</html>
