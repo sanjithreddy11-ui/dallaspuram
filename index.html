@@ -1443,6 +1443,351 @@
   @media (prefers-reduced-motion: reduce){
     .testimonials__panel{ transition:none; }
   }
+
+  /* ==================================================== */
+  /* SECTION 06 — VISIT US                                 */
+  /* Same global background, same .site-container master   */
+  /* left edge, same colors/typography/control language as */
+  /* every prior section. Two-column editorial layout:      */
+  /* address / hours / phone / CTA on the left, a single    */
+  /* stylised map panel on the right — no photography.      */
+  /* ==================================================== */
+  .visit{
+    position:relative;
+    background: transparent;
+    overflow:hidden;
+    isolation:isolate;
+  }
+  /* Legibility veil only — identical technique to every other
+     section's scrim. No new background image, no solid fill. */
+  .visit__scrim{
+    position:absolute; inset:0; z-index:0;
+    pointer-events:none;
+    background:
+      linear-gradient(180deg, rgba(36,30,26,0.20) 0%, rgba(36,30,26,0) 16%, rgba(36,30,26,0) 84%, rgba(36,30,26,0.20) 100%),
+      linear-gradient(90deg, rgba(244,236,221,0.42) 0%, rgba(244,236,221,0.14) 46%, rgba(244,236,221,0) 68%);
+  }
+  @media (min-width:1024px){
+    .visit__scrim{
+      background:
+        linear-gradient(180deg, rgba(36,30,26,0.16) 0%, rgba(36,30,26,0) 14%, rgba(36,30,26,0) 86%, rgba(36,30,26,0.16) 100%),
+        linear-gradient(90deg, rgba(244,236,221,0.46) 0%, rgba(244,236,221,0.16) 42%, rgba(244,236,221,0) 62%);
+    }
+  }
+
+  /* .visit__inner IS the global .site-container (shared class on the
+     same element, exactly like every other section) — it only adds
+     vertical rhythm and the two-column layout on top of the
+     inherited horizontal edges. */
+  .visit__inner{
+    position:relative; z-index:1;
+    padding-top: var(--section-space);
+    padding-bottom: calc(var(--section-space) / 2);
+    display:flex; flex-direction:column;
+    gap: 48px;
+  }
+  @media (min-width:1024px){
+    .visit__inner{
+      flex-direction:row;
+      align-items:stretch;
+      gap: 72px;
+    }
+  }
+  @media (min-width:1440px){
+    .visit__inner{ gap:96px; }
+  }
+
+  .visit__content{ max-width:560px; }
+  @media (min-width:1024px){
+    .visit__content{ flex:0 0 44%; max-width:480px; display:flex; flex-direction:column; }
+  }
+
+  .visit__label{
+    display:flex; align-items:baseline; gap:14px;
+    margin:0 0 22px;
+  }
+  .visit__label .num{
+    font-family:'Fraunces', serif;
+    font-size:15px; font-weight:500;
+    color: var(--terracotta-deep);
+  }
+  .visit__label .txt{
+    font-size:11.5px; font-weight:700; letter-spacing:.18em;
+    color: var(--charcoal-soft);
+  }
+  .visit__label::after{
+    content:'';
+    flex:1; height:1px; background:var(--line);
+    align-self:center;
+  }
+
+  .visit__headline{
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    font-size: clamp(2.1rem, 6vw, 3.1rem);
+    line-height:1.14;
+    letter-spacing:-.01em;
+    margin:0 0 18px;
+  }
+  .visit__headline .dark{ color:var(--charcoal); }
+  .visit__headline .warm{ color:var(--terracotta-deep); }
+
+  .visit__copy{
+    font-size:15.5px; line-height:1.65;
+    color: var(--charcoal-soft);
+    max-width:44ch;
+    margin:0 0 32px;
+  }
+  @media (min-width:768px){
+    .visit__copy{ font-size:16.5px; }
+  }
+
+  /* ---- info blocks: address / hours / phone ---- */
+  .visit__info{
+    display:flex; flex-direction:column;
+    border-top:1px solid var(--line);
+    margin-bottom:32px;
+  }
+  .visit__info-item{
+    padding:20px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .visit__info-item .label{
+    font-size:10.5px; font-weight:700; letter-spacing:.14em;
+    color: var(--terracotta-deep);
+    margin:0 0 8px;
+  }
+  .visit__info-item .value{
+    font-size:14.5px; line-height:1.6;
+    color: var(--charcoal);
+    margin:0;
+  }
+  .visit__info-item .value.placeholder{
+    color: var(--charcoal-soft);
+    font-style: italic;
+  }
+
+  .visit__cta{ margin-top:auto; }
+
+  /* ---- right column: real Google Maps panel ---- */
+  .visit__map{
+    display:flex; flex-direction:column;
+    width:100%;
+  }
+  @media (min-width:1024px){
+    .visit__map{ flex:1 1 auto; }
+  }
+
+  .visit__map-panel{
+    position:relative;
+    width:100%;
+    aspect-ratio: 4 / 3.6;
+    min-height:340px;
+    border-radius:4px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    box-shadow: 0 22px 48px rgba(36,30,26,.16);
+    background: #EFE4CF;
+  }
+  @media (min-width:768px){
+    .visit__map-panel{ aspect-ratio: 4 / 3; min-height:420px; }
+  }
+  @media (min-width:1024px){
+    .visit__map-panel{ aspect-ratio: auto; height:100%; min-height:520px; }
+  }
+
+  /* The real, live Google Maps iframe — fills the entire panel.
+     Loads immediately with no API key required; if a verified
+     Maps Embed API key is set in GOOGLE_MAPS_API_KEY, script
+     upgrades this src to the official Embed API place result. */
+  .visit__map-panel iframe{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    display:block;
+    border:0;
+  }
+
+  /* Mobile "tap to interact" layer — prevents a single accidental
+     touch on the live map from hijacking page scroll. Desktop never
+     shows it; the real map is interactive immediately. */
+  .visit__map-tap{
+    position:absolute; inset:0; z-index:2;
+    display:none;
+    align-items:center; justify-content:center;
+    background: rgba(36,30,26,0.10);
+  }
+  .visit__map-tap span{
+    padding:10px 18px;
+    background: rgba(244,236,221,0.94);
+    border:1px solid var(--line);
+    border-radius:2px;
+    font-size:11px; font-weight:700; letter-spacing:.1em;
+    color: var(--charcoal);
+    box-shadow: 0 4px 14px rgba(36,30,26,.18);
+  }
+  .visit__map-tap.is-dismissed{ display:none !important; }
+  @media (max-width:767px){
+    .visit__map-tap{ display:flex; }
+  }
+
+  /* Refined "OPEN IN GOOGLE MAPS" control, anchored to the map
+     panel's own bottom edge rather than sitting in empty space
+     below it — keeps the map itself as the dominant visual. */
+  .visit__map-openlink{
+    position:absolute; left:14px; bottom:14px; z-index:3;
+    display:inline-flex; align-items:center; gap:8px;
+    padding:10px 16px;
+    background: rgba(244,236,221,.96);
+    border:1px solid var(--line);
+    border-radius:2px;
+    font-size:11px; font-weight:700; letter-spacing:.08em;
+    color: var(--terracotta-deep);
+    box-shadow: 0 6px 18px rgba(36,30,26,.2);
+    transition: background .2s ease, transform .2s ease;
+  }
+  .visit__map-openlink:hover{ background: rgba(244,236,221,1); transform: translateY(-1px); }
+  .visit__map-openlink .arrow{ transition: transform .2s ease; }
+  .visit__map-openlink:hover .arrow{ transform: translateX(3px); }
+
+  /* mobile: keep the map easy to scroll past — the tap layer above
+     handles first-touch capture, this just avoids double-scroll
+     locking inside the iframe's own viewport */
+  @media (max-width:767px){
+    .visit__map-panel{ touch-action: pan-y; }
+  }
+
+  /* ==================================================== */
+  /* FOOTER                                                */
+  /* Visually simpler, quieter conclusion to the same       */
+  /* Dallaspuram world — same container, same palette,      */
+  /* restrained typography, no new visual system.           */
+  /* ==================================================== */
+  .site-footer{
+    position:relative;
+    background: transparent;
+    overflow:hidden;
+    isolation:isolate;
+    border-top:1px solid var(--line);
+  }
+  /* Slightly firmer veil than the sections above it, just enough to
+     separate the footer as the page's closing note while remaining
+     the same physical environment — no new background image. */
+  .footer__scrim{
+    position:absolute; inset:0; z-index:0;
+    pointer-events:none;
+    background: linear-gradient(180deg, rgba(244,236,221,0.55) 0%, rgba(244,236,221,0.82) 100%);
+  }
+
+  .footer__inner{
+    position:relative; z-index:1;
+    padding-top: calc(var(--section-space) / 2);
+    padding-bottom: calc(var(--section-space) / 3);
+    display:flex; flex-direction:column;
+    gap: 44px;
+  }
+
+  .footer__top{
+    display:flex; flex-direction:column;
+    gap:40px;
+  }
+  @media (min-width:768px){
+    .footer__top{
+      flex-direction:row;
+      flex-wrap:wrap;
+      justify-content:space-between;
+      gap:48px 32px;
+    }
+  }
+
+  .footer__brand{ max-width:320px; }
+  .footer__brand-mark{
+    display:flex; align-items:center; gap:12px;
+    margin-bottom:16px;
+  }
+  .footer__brand-mark img{
+    width:44px; height:44px; border-radius:9px;
+    box-shadow: 0 2px 10px rgba(36,30,26,.18);
+  }
+  .footer__brand-mark span{
+    font-size:11px; font-weight:700; letter-spacing:.14em;
+    color: var(--charcoal-soft);
+  }
+  .footer__brand-copy{
+    font-size:13.5px; line-height:1.65;
+    color: var(--charcoal-soft);
+    margin:0 0 20px;
+  }
+
+  .footer__social{
+    display:flex; align-items:center; gap:12px;
+  }
+  .footer__social a{
+    width:36px; height:36px;
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--line);
+    border-radius:2px;
+    color: var(--charcoal);
+    transition: border-color .2s ease, color .2s ease, background .2s ease;
+  }
+  .footer__social a:hover{
+    border-color: var(--terracotta-deep);
+    color: var(--terracotta-deep);
+    background: rgba(184,92,46,.08);
+  }
+  .footer__social svg{ width:16px; height:16px; }
+
+  .footer__col-head{
+    font-size:10.5px; font-weight:700; letter-spacing:.14em;
+    color: var(--terracotta-deep);
+    margin:0 0 18px;
+  }
+
+  .footer__links{ list-style:none; margin:0; padding:0; }
+  .footer__links li{ margin-bottom:12px; }
+  .footer__links a{
+    font-size:13.5px; font-weight:600; letter-spacing:.03em;
+    color: var(--charcoal-soft);
+    transition: color .2s ease;
+  }
+  .footer__links a:hover{ color: var(--terracotta-deep); }
+
+  .footer__hours dt{
+    font-size:10.5px; font-weight:700; letter-spacing:.1em;
+    color: var(--charcoal-soft);
+    margin:0 0 4px;
+  }
+  .footer__hours dd{
+    font-size:13.5px; color: var(--charcoal);
+    margin:0 0 16px;
+  }
+  .footer__hours dd:last-child{ margin-bottom:0; }
+
+  .footer__contact{ font-size:13.5px; line-height:1.65; color: var(--charcoal-soft); }
+  .footer__contact p{ margin:0 0 14px; }
+  .footer__contact p:last-child{ margin-bottom:0; }
+  .footer__contact a{ color: var(--charcoal); font-weight:600; }
+  .footer__contact a:hover{ color: var(--terracotta-deep); }
+  .footer__contact .placeholder{ font-style:italic; color: var(--charcoal-soft); opacity:.8; }
+
+  .footer__bottom{
+    display:flex; flex-direction:column;
+    gap:10px;
+    padding-top:28px;
+    border-top:1px solid var(--line);
+  }
+  @media (min-width:768px){
+    .footer__bottom{
+      flex-direction:row;
+      align-items:center;
+      justify-content:space-between;
+    }
+  }
+  .footer__bottom p{
+    margin:0;
+    font-size:12px;
+    color: var(--charcoal-soft);
+  }
+  .footer__bottom .tagline{ opacity:.75; }
 </style>
 </head>
 <body class="intro-active">
@@ -1465,7 +1810,7 @@
 <!-- ================================
      SECTION 01 — HERO
      ================================ -->
-<header class="hero">
+<header class="hero" id="hero">
   <div class="hero__scrim"></div>
 
   <nav class="nav" aria-label="Primary">
@@ -1477,9 +1822,8 @@
       <ul class="nav__links">
         <li><a href="#menu">MENU</a></li>
         <li><a href="#story">OUR STORY</a></li>
-        <li><a href="#experience">EXPERIENCE</a></li>
         <li><a href="#gallery">GALLERY</a></li>
-        <li><a href="#visit">VISIT US</a></li>
+        <li><a href="#visit-us">VISIT US</a></li>
       </ul>
 
       <div class="nav__right">
@@ -1919,7 +2263,141 @@
   </div>
 </section>
 
+<!-- ================================
+     SECTION 06 — VISIT US
+     ================================ -->
+<section id="visit-us" class="visit">
+  <div class="visit__scrim"></div>
+  <div class="visit__inner site-container">
+
+    <div class="visit__content">
+      <p class="visit__label reveal">
+        <span class="num">06</span>
+        <span class="txt">VISIT US</span>
+      </p>
+
+      <h2 class="visit__headline reveal">
+        <span class="dark">Come</span><br>
+        <span class="warm">find us.</span>
+      </h2>
+
+      <p class="visit__copy reveal">
+        Step into Dallaspuram for Telugu flavours, warm hospitality and evenings worth remembering.
+      </p>
+
+      <div class="visit__info reveal">
+        <div class="visit__info-item">
+          <p class="label">ADDRESS</p>
+          <p class="value">5, Plot No. 29, Road, Chandrapuri Colony, opposite to Vijaya Lakshmi Theatre, Saraswati Nagar, Chandrapuri Colony, L. B. Nagar, Hyderabad, Telangana 500074, India</p>
+        </div>
+        <div class="visit__info-item">
+          <p class="label">HOURS</p>
+          <p class="value">Kitchen — 12:00 PM – 11:30 PM<br>Bar — 12:00 PM – 12:00 AM</p>
+        </div>
+        <div class="visit__info-item">
+          <p class="label">PHONE</p>
+          <p class="value placeholder">Phone number to be added</p>
+        </div>
+      </div>
+
+      <a href="https://www.google.com/maps/dir/?api=1&amp;destination=Dallaspuram%20Telugu%20Kitchen%20%26%20Bar%2C%205%2C%20Plot%20No.%2029%2C%20Road%2C%20Chandrapuri%20Colony%2C%20opposite%20to%20Vijaya%20Lakshmi%20Theatre%2C%20Saraswati%20Nagar%2C%20Chandrapuri%20Colony%2C%20L.%20B.%20Nagar%2C%20Hyderabad%2C%20Telangana%20500074%2C%20India"
+         target="_blank" rel="noopener" class="btn primary visit__cta reveal" aria-label="Get directions to Dallaspuram Telugu Kitchen &amp; Bar on Google Maps">GET DIRECTIONS <span class="arrow">→</span></a>
+    </div>
+
+    <div class="visit__map reveal">
+      <div class="visit__map-panel" id="visitMapPanel">
+        <!-- REAL, LIVE Google Maps embed — targets the verified
+             restaurant name + address already used by GET DIRECTIONS
+             below. Works immediately with no API key. If a verified
+             Google Maps Embed API key is added to GOOGLE_MAPS_API_KEY
+             near the end of the page, script upgrades this to the
+             official Embed API place result automatically. -->
+        <iframe
+          id="visitMapFrame"
+          src="https://www.google.com/maps?q=Dallaspuram%20Telugu%20Kitchen%20%26%20Bar%2C%205%2C%20Plot%20No.%2029%2C%20Road%2C%20Chandrapuri%20Colony%2C%20opposite%20to%20Vijaya%20Lakshmi%20Theatre%2C%20Saraswati%20Nagar%2C%20Chandrapuri%20Colony%2C%20L.%20B.%20Nagar%2C%20Hyderabad%2C%20Telangana%20500074%2C%20India&amp;output=embed"
+          title="Dallaspuram Telugu Kitchen &amp; Bar location on Google Maps"
+          loading="lazy"
+          allowfullscreen
+          referrerpolicy="strict-origin-when-cross-origin"></iframe>
+
+        <div class="visit__map-tap" id="visitMapTap" aria-hidden="true">
+          <span>Tap to interact with map</span>
+        </div>
+
+        <a href="https://www.google.com/maps/search/?api=1&amp;query=Dallaspuram%20Telugu%20Kitchen%20%26%20Bar%2C%205%2C%20Plot%20No.%2029%2C%20Road%2C%20Chandrapuri%20Colony%2C%20opposite%20to%20Vijaya%20Lakshmi%20Theatre%2C%20Saraswati%20Nagar%2C%20Chandrapuri%20Colony%2C%20L.%20B.%20Nagar%2C%20Hyderabad%2C%20Telangana%20500074%2C%20India"
+           target="_blank" rel="noopener" class="visit__map-openlink" aria-label="Open Dallaspuram Telugu Kitchen &amp; Bar in Google Maps">OPEN IN GOOGLE MAPS <span class="arrow">→</span></a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 </main>
+
+<!-- ================================
+     FOOTER
+     ================================ -->
+<footer class="site-footer">
+  <div class="footer__scrim"></div>
+  <div class="footer__inner site-container">
+
+    <div class="footer__top">
+      <div class="footer__brand">
+        <div class="footer__brand-mark">
+          <img src="assets/logo.webp" alt="Dallaspuram — Telugu Kitchen & Bar" width="44" height="44">
+          <span>TELUGU KITCHEN &amp; BAR</span>
+        </div>
+        <p class="footer__brand-copy">A modern celebration of Telugu flavours, warm hospitality and meaningful moments around the table.</p>
+        <div class="footer__social">
+          <a href="#" aria-label="Dallaspuram on Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg>
+          </a>
+          <a href="#" aria-label="Dallaspuram on Facebook">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 3h-2a5 5 0 0 0-5 5v2H6v4h2v7h4v-7h3l1-4h-4V8a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer__quicklinks">
+        <p class="footer__col-head">QUICK LINKS</p>
+        <ul class="footer__links">
+          <li><a href="#hero">HOME</a></li>
+          <li><a href="#story">OUR STORY</a></li>
+          <li><a href="#menu">MENU</a></li>
+          <li><a href="#gallery">GALLERY</a></li>
+          <li><a href="#guest-stories">GUEST STORIES</a></li>
+          <li><a href="#visit-us">VISIT US</a></li>
+          <li><a href="#reserve">RESERVE A TABLE</a></li>
+          <li><a href="#order">ORDER ONLINE</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__hours-col">
+        <p class="footer__col-head">HOURS</p>
+        <dl class="footer__hours">
+          <dt>KITCHEN</dt>
+          <dd>12:00 PM – 11:30 PM</dd>
+          <dt>BAR</dt>
+          <dd>12:00 PM – 12:00 AM</dd>
+        </dl>
+      </div>
+
+      <div class="footer__contact-col">
+        <p class="footer__col-head">CONTACT</p>
+        <div class="footer__contact">
+          <p class="placeholder">Phone number to be added</p>
+          <p>5, Plot No. 29, Road, Chandrapuri Colony, opposite to Vijaya Lakshmi Theatre, Saraswati Nagar, Chandrapuri Colony, L. B. Nagar, Hyderabad, Telangana 500074, India</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <p>&copy; <span id="footerYear">2026</span> Dallaspuram. All rights reserved.</p>
+      <p class="tagline">Good food brings people together.</p>
+    </div>
+
+  </div>
+</footer>
 
 <!-- MOBILE / OVERLAY MENU -->
 <div class="menu-panel" id="menuPanel" role="dialog" aria-modal="true" aria-label="Site menu">
@@ -1927,9 +2405,8 @@
   <ul>
     <li><a href="#menu">Menu</a></li>
     <li><a href="#story">Our Story</a></li>
-    <li><a href="#experience">Experience</a></li>
     <li><a href="#gallery">Gallery</a></li>
-    <li><a href="#visit">Visit Us</a></li>
+    <li><a href="#visit-us">Visit Us</a></li>
   </ul>
   <div class="menu-panel__ctas">
     <a href="#order" class="order">ORDER ONLINE</a>
@@ -1962,6 +2439,44 @@
       // safety fallback in case load event is delayed
       setTimeout(reveal, 4000);
     }
+  })();
+
+  // ---- Section 06: Visit Us — real Google Map ----
+  // The embedded map above already works with no API key (a plain
+  // Google Maps search embed). If a verified Google Maps Embed API
+  // key is added below, this script upgrades the iframe to the
+  // official Embed API "place" result for a richer business card.
+  // The standalone "GET DIRECTIONS" and "OPEN IN GOOGLE MAPS" links
+  // are plain Google Maps URLs and always work with no key at all.
+  const GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY";
+
+  (function(){
+    var frame = document.getElementById('visitMapFrame');
+    if (!frame) return;
+
+    // Same verified restaurant name + address used by the
+    // GET DIRECTIONS / OPEN IN GOOGLE MAPS links in the markup.
+    var PLACE_QUERY = 'Dallaspuram Telugu Kitchen & Bar, 5, Plot No. 29, Road, Chandrapuri Colony, opposite to Vijaya Lakshmi Theatre, Saraswati Nagar, Chandrapuri Colony, L. B. Nagar, Hyderabad, Telangana 500074, India';
+
+    var hasKey = GOOGLE_MAPS_API_KEY && GOOGLE_MAPS_API_KEY !== 'YOUR_GOOGLE_MAPS_API_KEY';
+    if (hasKey){
+      frame.src = 'https://www.google.com/maps/embed/v1/place?key=' + encodeURIComponent(GOOGLE_MAPS_API_KEY) + '&q=' + encodeURIComponent(PLACE_QUERY);
+    }
+
+    // Mobile: require one tap before the map can capture touches,
+    // so visitors can still scroll the page past it easily.
+    var tap = document.getElementById('visitMapTap');
+    if (tap){
+      var dismiss = function(){ tap.classList.add('is-dismissed'); };
+      tap.addEventListener('click', dismiss);
+      tap.addEventListener('touchstart', dismiss, { passive:true });
+    }
+  })();
+
+  // ---- Footer: current year ----
+  (function(){
+    var y = document.getElementById('footerYear');
+    if (y) y.textContent = new Date().getFullYear();
   })();
 
   // ---- Mobile menu ----
