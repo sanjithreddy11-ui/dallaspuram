@@ -588,24 +588,25 @@
       border-radius: 50%;
     }
 
-    /* -- hero content: begins right below the navbar, no forced
-       vertical centering. -- */
+    /* -- hero content: fills the full first mobile screen, with the
+       complete content block vertically centered in the space below
+       the fixed navbar (left-aligned horizontally — see .hero__text). -- */
     .hero__content{
-      justify-content: flex-start;
+      justify-content: center;
       padding-top: 24px;
-      padding-bottom: 10px;
+      padding-bottom: 24px;
     }
     .hero__text{ max-width: none; }
 
-    /* Hero no longer needs to fill a full 100svh screen on mobile —
-       that sizing existed to pin the scroll cue to the bottom of the
-       first viewport. With the scroll cue removed below, forcing
-       .hero to min-height:100svh would leave hero__content's flex:1
-       stretching into a large empty area before Story begins. Letting
-       .hero size to its own content instead means the Hero now ends
-       right after the buttons + hero__content's own small bottom
-       padding, and Story follows immediately with no dead gap. */
-    .hero{ min-height: 0; }
+    /* Hero fills the full mobile viewport (below the fixed navbar,
+       which is already reserved via .hero's padding-top). Using both
+       100svh and 100dvh — svh as a safe fallback, dvh so the Hero
+       tracks the browser chrome shrinking/growing as the user
+       scrolls, rather than leaving a gap or forcing extra scroll. */
+    .hero{
+      min-height: 100svh;
+      min-height: 100dvh;
+    }
 
     .eyebrow{
       display:flex; align-items:center; gap:10px;
@@ -652,6 +653,16 @@
        base rule and the existing min-width:768px override above are
        both left exactly as they were. */
     .info-row{ display:none; }
+
+    /* Testimonials' prev/next + "01 / 06" counter group: center the
+       whole group as a single unit within its full-width column
+       (.testimonials__panel-wrap), instead of it defaulting to the
+       left edge. Scoped to the testimonials panel only — the Gallery
+       section's own .gallery__controls (head row) is left untouched,
+       since there it intentionally sits opposite the heading text. */
+    .testimonials__panel-wrap .gallery__controls{
+      justify-content: center;
+    }
 
     /* "SCROLL TO EXPLORE" removed entirely from the mobile Hero —
        display:none takes the whole element out of flow, so none of
