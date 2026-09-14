@@ -591,17 +591,21 @@
     /* -- hero content: begins right below the navbar, no forced
        vertical centering, so the composition reads top-anchored
        with the scroll cue naturally settling at the bottom of the
-       first screen instead of a huge dead zone in the middle -- */
+       first screen instead of a huge dead zone in the middle.
+       Padding here is intentionally lean — hero__content is flex:1
+       inside a 100svh .hero, so anything added here directly eats
+       into the room .scroll-cue needs to stay inside the first
+       viewport without scrolling. -- */
     .hero__content{
       justify-content: flex-start;
-      padding-top: 34px;
-      padding-bottom: 22px;
+      padding-top: 24px;
+      padding-bottom: 10px;
     }
     .hero__text{ max-width: none; }
 
     .eyebrow{
       display:flex; align-items:center; gap:10px;
-      margin-bottom: 16px;
+      margin-bottom: 10px;
     }
     .eyebrow::before{
       content:'';
@@ -615,27 +619,27 @@
     .headline{
       font-size: clamp(2.85rem, 13.2vw, 3.75rem);
       line-height: 1.04;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     .supporting{
       font-size: 15px;
       line-height: 1.55;
       max-width: 32ch;
-      margin-bottom: 22px;
+      margin-bottom: 14px;
     }
 
     /* full-width stacked CTAs, equal width, tighter gaps */
     .cta-row{
       flex-direction: column;
-      gap: 12px;
-      margin-bottom: 22px;
+      gap: 10px;
+      margin-bottom: 16px;
     }
     .cta-row .btn{
       width: 100%;
       justify-content: center;
-      padding: 15px 20px;
-      min-height: 52px;
+      padding: 13px 20px;
+      min-height: 46px;
     }
 
     /* Kitchen / Bar / Location fully removed from the mobile layout —
@@ -646,13 +650,16 @@
     .info-row{ display:none; }
 
     /* scroll cue: centered mouse icon + label + bouncing chevron,
-       replacing the desktop-style vertical drip line on phones */
+       replacing the desktop-style vertical drip line on phones. Kept
+       as one small, deliberate gap after RESERVE A TABLE rather than
+       three separate paddings stacking up — that stacking was most of
+       why this fell below the first viewport before. */
     .scroll-cue{
       flex-wrap: wrap;
       justify-content: center;
-      row-gap: 8px; column-gap: 8px;
-      padding-top: 18px;
-      padding-bottom: 22px;
+      row-gap: 6px; column-gap: 8px;
+      padding-top: 4px;
+      padding-bottom: 14px;
     }
     .scroll-cue .line{ display:none; }
     .scroll-cue__mouse{
@@ -678,6 +685,21 @@
   /* extremely narrow phones: keep the headline comfortably sized */
   @media (max-width:359.98px){
     .headline{ font-size: clamp(2.5rem, 12.8vw, 2.9rem); }
+  }
+
+  /* unusually SHORT mobile viewports (small/old devices, foldables,
+     or heavy browser-chrome situations) — a height-based query so
+     Scroll To Explore keeps degrading gracefully instead of ever
+     dropping below the first viewport, without touching the normal
+     spacing used on every common phone height tested above. */
+  @media (max-width:767.98px) and (max-height:600px){
+    .hero__content{ padding-top: 16px; padding-bottom: 6px; }
+    .eyebrow{ margin-bottom: 6px; }
+    .headline{ margin-bottom: 8px; }
+    .supporting{ margin-bottom: 8px; }
+    .cta-row{ gap: 8px; margin-bottom: 10px; }
+    .cta-row .btn{ min-height: 42px; padding: 11px 20px; }
+    .scroll-cue{ padding-top: 2px; padding-bottom: 10px; }
   }
 
   /* ==================================================== */
