@@ -188,11 +188,17 @@
 
   /* subtle legibility scrim - warm, not darkening the artwork's palette.
      Local to the Hero section only; the background image itself lives
-     in .site-bg and is never duplicated here. */
+     in .site-bg and is never duplicated here.
+     NOTE: the bottom-edge stop is intentionally kept gentle (0.16, softer
+     than desktop's own 0.30) — Story's own top-edge scrim sits directly
+     against this one with no gap between the two sections, so anything
+     stronger here compounds with Story's top darkening into a visibly
+     dark band exactly at the Hero→Story seam during scroll. Two
+     independently-subtle edges must stay subtle when added together. */
   .hero__scrim{
     position:absolute; inset:0; z-index:1;
     background:
-      linear-gradient(180deg, rgba(36,30,26,0.30) 0%, rgba(36,30,26,0.02) 26%, rgba(36,30,26,0.02) 60%, rgba(36,30,26,0.42) 100%),
+      linear-gradient(180deg, rgba(36,30,26,0.30) 0%, rgba(36,30,26,0.02) 24%, rgba(36,30,26,0.02) 66%, rgba(36,30,26,0.16) 100%),
       linear-gradient(90deg, rgba(244,236,221,0.30) 0%, rgba(244,236,221,0.06) 42%, rgba(244,236,221,0) 60%);
     pointer-events:none;
   }
@@ -621,30 +627,12 @@
       min-height: 52px;
     }
 
-    /* one compact three-column info row, dividers included on
-       mobile (previously dividers only appeared at 768px+) */
-    .info-row{
-      flex-wrap: nowrap;
-      justify-content: space-between;
-      gap: 0;
-      padding: 16px 0;
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-    }
-    .info-item{
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: 6px;
-      flex: 1 1 0;
-      min-width: 0;
-      padding: 0 6px;
-      border-right: 1px solid var(--line);
-    }
-    .info-item:last-child{ border-right: none; }
-    .info-item svg{ width: 19px; height: 19px; margin-top: 0; }
-    .info-item .label{ white-space: normal; font-size: 9.5px; }
-    .info-item .value{ white-space: normal; font-size: 12px; }
+    /* Kitchen / Bar / Location fully removed from the mobile layout —
+       display:none takes it out of flow entirely, so no blank space is
+       reserved where it used to sit. Untouched on desktop: the shared
+       base rule and the existing min-width:768px override above are
+       both left exactly as they were. */
+    .info-row{ display:none; }
 
     /* scroll cue: centered mouse icon + label + bouncing chevron,
        replacing the desktop-style vertical drip line on phones */
@@ -676,15 +664,9 @@
     }
   }
 
-  /* extremely narrow phones: shrink the info row a touch further
-     before ever changing the three-column structure */
+  /* extremely narrow phones: keep the headline comfortably sized */
   @media (max-width:359.98px){
     .headline{ font-size: clamp(2.5rem, 12.8vw, 2.9rem); }
-    .info-row{ gap:0; }
-    .info-item{ padding: 0 4px; gap:4px; }
-    .info-item svg{ width:16px; height:16px; }
-    .info-item .label{ font-size:8.6px; letter-spacing:.06em; }
-    .info-item .value{ font-size:11px; }
   }
 
   /* ==================================================== */
@@ -699,12 +681,16 @@
   }
   /* Local legibility veil only — the exact same Dallaspuram background
      from .site-bg remains visible through it. No new background image,
-     no solid fill, no hard-edged panel. */
+     no solid fill, no hard-edged panel.
+     NOTE: the top-edge stop is intentionally gentle (0.10 on mobile) and
+     ramps in slowly (over 22%) — it sits directly against Hero's own
+     bottom-edge scrim with no gap, so keeping both edges light prevents
+     them compounding into a visible dark band at the Hero→Story seam. */
   .story__scrim{
     position:absolute; inset:0; z-index:0;
     pointer-events:none;
     background:
-      linear-gradient(180deg, rgba(36,30,26,0.20) 0%, rgba(36,30,26,0) 16%, rgba(36,30,26,0) 84%, rgba(36,30,26,0.20) 100%),
+      linear-gradient(180deg, rgba(36,30,26,0.10) 0%, rgba(36,30,26,0) 22%, rgba(36,30,26,0) 84%, rgba(36,30,26,0.20) 100%),
       linear-gradient(90deg, rgba(244,236,221,0.42) 0%, rgba(244,236,221,0.14) 46%, rgba(244,236,221,0) 68%);
   }
   @media (min-width:1024px){
