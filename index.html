@@ -589,19 +589,23 @@
     }
 
     /* -- hero content: begins right below the navbar, no forced
-       vertical centering, so the composition reads top-anchored
-       with the scroll cue naturally settling at the bottom of the
-       first screen instead of a huge dead zone in the middle.
-       Padding here is intentionally lean — hero__content is flex:1
-       inside a 100svh .hero, so anything added here directly eats
-       into the room .scroll-cue needs to stay inside the first
-       viewport without scrolling. -- */
+       vertical centering. -- */
     .hero__content{
       justify-content: flex-start;
       padding-top: 24px;
       padding-bottom: 10px;
     }
     .hero__text{ max-width: none; }
+
+    /* Hero no longer needs to fill a full 100svh screen on mobile —
+       that sizing existed to pin the scroll cue to the bottom of the
+       first viewport. With the scroll cue removed below, forcing
+       .hero to min-height:100svh would leave hero__content's flex:1
+       stretching into a large empty area before Story begins. Letting
+       .hero size to its own content instead means the Hero now ends
+       right after the buttons + hero__content's own small bottom
+       padding, and Story follows immediately with no dead gap. */
+    .hero{ min-height: 0; }
 
     .eyebrow{
       display:flex; align-items:center; gap:10px;
@@ -649,37 +653,15 @@
        both left exactly as they were. */
     .info-row{ display:none; }
 
-    /* scroll cue: centered mouse icon + label + bouncing chevron,
-       replacing the desktop-style vertical drip line on phones. Kept
-       as one small, deliberate gap after RESERVE A TABLE rather than
-       three separate paddings stacking up — that stacking was most of
-       why this fell below the first viewport before. */
-    .scroll-cue{
-      flex-wrap: wrap;
-      justify-content: center;
-      row-gap: 6px; column-gap: 8px;
-      padding-top: 4px;
-      padding-bottom: 14px;
-    }
-    .scroll-cue .line{ display:none; }
-    .scroll-cue__mouse{
-      display:block;
-      width:14px; height:22px;
-      color: var(--charcoal-soft);
-    }
-    .scroll-cue__chevron{
-      display:flex;
-      flex-basis:100%;
-      justify-content:center;
-      width:12px; height:6px;
-      margin: 0 auto;
-      color: var(--charcoal-soft);
-      animation: chevronBounce 1.6s ease-in-out infinite;
-    }
-    @keyframes chevronBounce{
-      0%,100%{ transform:translateY(0); opacity:.65; }
-      50%{ transform:translateY(3px); opacity:1; }
-    }
+    /* "SCROLL TO EXPLORE" removed entirely from the mobile Hero —
+       display:none takes the whole element out of flow, so none of
+       its padding/gap/height is reserved and no empty space is left
+       where it used to sit. The Hero now ends naturally right after
+       RESERVE A TABLE plus hero__content's own small bottom padding.
+       Desktop is untouched: this class only exists inside this
+       max-width:767.98px block, so the existing desktop scroll cue
+       (text + animated line) keeps rendering exactly as it always has. */
+    .scroll-cue{ display:none; }
   }
 
   /* extremely narrow phones: keep the headline comfortably sized */
@@ -699,7 +681,6 @@
     .supporting{ margin-bottom: 8px; }
     .cta-row{ gap: 8px; margin-bottom: 10px; }
     .cta-row .btn{ min-height: 42px; padding: 11px 20px; }
-    .scroll-cue{ padding-top: 2px; padding-bottom: 10px; }
   }
 
   /* ==================================================== */
