@@ -561,16 +561,27 @@
     /* -- navbar: shorter, logo-forward, lighter controls -- */
     :root{ --nav-h-mobile: 58px; }
 
+    /* Sized by HEIGHT, not width — this is what guarantees the logo
+       physically cannot exceed the 58px navbar regardless of the
+       source asset's own aspect ratio (the previous width-based
+       clamp could produce a taller-than-the-navbar image depending on
+       that ratio, which is what was escaping the navbar). width:auto
+       preserves the aspect ratio exactly, so nothing is cropped or
+       stretched. The (58px row − logo height) gap splits evenly above
+       and below via the row's align-items:center, giving consistent
+       breathing room automatically. */
     .brand img{
-      width: clamp(100px, 28vw, 150px);
-      height: auto;
+      height: clamp(24px, 6.5vw, 30px);
+      width: auto;
+      max-width: 40vw;
       border-radius: 0;
       box-shadow: none;
     }
     .nav__cta.order.mobile-order{
-      border-radius: 999px;
-      padding: 11px 18px;
-      font-size: 11px;
+      border-radius: 3px;
+      padding: 8px 12px;
+      font-size: 9.5px;
+      letter-spacing: .05em;
     }
     .hamburger{
       width: 42px; height: 42px;
@@ -583,7 +594,7 @@
        first screen instead of a huge dead zone in the middle -- */
     .hero__content{
       justify-content: flex-start;
-      padding-top: 22px;
+      padding-top: 34px;
       padding-bottom: 22px;
     }
     .hero__text{ max-width: none; }
@@ -3272,16 +3283,42 @@
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var seen = sessionStorage.getItem('dp_intro_seen');
 
+    if (seen) {
+      intro.classList.add('hide');
+      document.body.classList.remove('intro-active');
+      return;
+    }
+
+    // Robust scroll lock while the intro overlay is up.
+    // `overflow:hidden` on body alone (the only lock previously in
+    // place) does NOT reliably block touch-driven scrolling in mobile
+    // Safari. That let a user's first scroll gesture actually move the
+    // page underneath the intro while it was still visible/mid-fade —
+    // and since #intro fades via an opacity transition, it is
+    // genuinely translucent for that ~0.7s, so the Story section
+    // showed through a dark veil right as it scrolled into view. This
+    // was the actual source of the "black translucent layer" on first
+    // scroll, not a z-index or overlay problem. Pinning the body with
+    // position:fixed makes the page physically unscrollable until the
+    // intro is fully gone, so that state can no longer be reached.
+    var lockY = window.scrollY || document.documentElement.scrollTop || 0;
+    document.body.style.position = 'fixed';
+    document.body.style.top = (-lockY) + 'px';
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+
     function reveal(){
       document.body.classList.remove('intro-active');
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      window.scrollTo(0, lockY);
       intro.classList.add('hide');
       sessionStorage.setItem('dp_intro_seen', '1');
     }
 
-    if (seen) {
-      intro.classList.add('hide');
-      document.body.classList.remove('intro-active');
-    } else if (reduced) {
+    if (reduced) {
       setTimeout(reveal, 400);
     } else {
       window.addEventListener('load', function(){
