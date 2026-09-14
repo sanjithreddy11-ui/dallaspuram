@@ -125,6 +125,22 @@
      changes between sections — sections scroll transparently over it. */
   .site-background{
     position:fixed; inset:0; z-index:0;
+    /* Explicit height fallback chain — the same one already used by
+       .hero further down for exactly this reason. inset:0 alone sizes
+       a fixed element against the browser's containing block for
+       fixed-position boxes, which on mobile Safari/Chrome is not
+       guaranteed to track the *current* (dynamic) viewport the instant
+       the address bar collapses or expands mid-scroll. For a couple of
+       frames during that resize the box can be shorter than the real
+       viewport, exposing the plain dark `body` background behind it as
+       a rectangle at the bottom edge — visually identical to a stray
+       dark overlay appearing over content while scrolling. dvh (with
+       svh/vh fallbacks for browsers that don't support it) keeps this
+       layer's height locked to the true visible viewport at all times,
+       so that gap can't open up. */
+    height: 100vh;
+    height: 100svh;
+    height: 100dvh;
     pointer-events:none;
   }
   .site-bg{
@@ -2008,13 +2024,26 @@
   .modal-overlay{
     position:fixed; inset:0; z-index:70;
     background: rgba(36,30,26,.55);
-    -webkit-backdrop-filter: blur(2px);
-    backdrop-filter: blur(2px);
     display:flex; justify-content:flex-end;
     opacity:0; visibility:hidden;
     transition: opacity .35s ease, visibility .35s ease;
   }
-  .modal-overlay.is-open{ opacity:1; visibility:visible; }
+  /* backdrop-filter is only ever applied in the .is-open state, not
+     the default (closed) one. A position:fixed layer that carries a
+     backdrop-filter AND an opacity/visibility transition at all times
+     — even while opacity:0/visibility:hidden — stays in the browser's
+     compositing tree permanently, and WebKit has a well-documented bug
+     where exactly that combination paints as a solid dark rectangle
+     for a frame or two during scroll, even though the layer is meant
+     to be fully invisible and inert. Scoping the filter to .is-open
+     means the closed state never asks the compositor to maintain that
+     layer at all, so there is nothing left for the browser to
+     mis-paint mid-scroll. */
+  .modal-overlay.is-open{
+    opacity:1; visibility:visible;
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+  }
   .modal-overlay--center{ justify-content:center; align-items:center; padding:20px; }
 
   body.modal-open{ overflow:hidden; }
@@ -3343,6 +3372,53 @@
     }
   })();
 
+  /* ---------------------------------------------------- */
+  /* SHARED SCROLL LOCK (used by every fixed, full-screen  */
+  /* overlay: mobile menu panel, order panel, reservation  */
+  /* dialog).                                                */
+  /* `overflow:hidden` on body alone does NOT reliably block */
+  /* touch-driven scrolling in mobile Safari — see the intro  */
+  /* overlay comment above, which was the first place this    */
+  /* was diagnosed: it let the page physically scroll underneath */
+  /* a still-visible/mid-transition fixed dark layer, reading   */
+  /* on screen as a dark/translucent rectangle sliding over the  */
+  /* content that's still legible around it. The menu panel and  */
+  /* order/reservation modal are the exact same shape of element  */
+  /* (position:fixed, full-bleed, dark/backdrop fill, opacity or  */
+  /* transform transition) and were still only using the weaker   */
+  /* overflow:hidden lock, so the same defect could resurface any-  */
+  /* where the user opened one of them and then swiped — including  */
+  /* carrying straight on into Gallery / Guest Stories right after.  */
+  /* Pinning body with position:fixed (reference-counted so the two  */
+  /* modal-overlay dialogs and the menu panel can never fight over    */
+  /* unlocking each other) makes scrolling underneath physically       */
+  /* impossible for the overlay's entire open lifecycle, closing off    */
+  /* the actual mechanism rather than papering over the symptom.        */
+  var scrollLockCount = 0;
+  var scrollLockY = 0;
+  function lockScroll(){
+    if (scrollLockCount === 0){
+      scrollLockY = window.scrollY || document.documentElement.scrollTop || 0;
+      document.body.style.position = 'fixed';
+      document.body.style.top = (-scrollLockY) + 'px';
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+    }
+    scrollLockCount++;
+  }
+  function unlockScroll(){
+    scrollLockCount = Math.max(0, scrollLockCount - 1);
+    if (scrollLockCount === 0){
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      window.scrollTo(0, scrollLockY);
+    }
+  }
+
   // ---- Section 06: Visit Us — real Google Map ----
   // The embedded map above already works with no API key (a plain
   // Google Maps search embed). If a verified Google Maps Embed API
@@ -3408,13 +3484,13 @@
     function open(){
       panel.classList.add('open');
       toggle.setAttribute('aria-expanded','true');
-      document.body.style.overflow = 'hidden';
+      lockScroll();
       close.focus();
     }
     function shut(){
       panel.classList.remove('open');
       toggle.setAttribute('aria-expanded','false');
-      document.body.style.overflow = '';
+      unlockScroll();
       toggle.focus();
     }
     toggle.addEventListener('click', function(){
@@ -4493,11 +4569,15 @@
   /* ---------------------------------------------------- */
   /* FOCUS TRAP + BODY SCROLL LOCK                           */
   /* ---------------------------------------------------- */
-  function lockBodyScroll(){ document.body.classList.add('modal-open'); }
+  function lockBodyScroll(){
+    document.body.classList.add('modal-open');
+    lockScroll();
+  }
   function unlockBodyScroll(){
     if (!orderOverlay.classList.contains('is-open') && !reservationOverlay.classList.contains('is-open')){
       document.body.classList.remove('modal-open');
     }
+    unlockScroll();
   }
   function trapFocus(e, container){
     var nodes = container.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
